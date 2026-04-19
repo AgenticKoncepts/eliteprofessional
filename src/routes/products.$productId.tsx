@@ -153,7 +153,7 @@ function ProductPage() {
                   {t("pd_variant")}
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {variantOptions.map((v) => (
+                  {variantOptions.map((v: string) => (
                     <button
                       key={v}
                       onClick={() => setVariant(v)}
