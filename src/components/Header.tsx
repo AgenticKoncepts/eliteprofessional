@@ -3,11 +3,14 @@ import { Search, Heart, ShoppingBag, Menu, X, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useI18n, CURRENCIES } from "@/lib/i18n";
 import { useWishlist } from "@/lib/wishlist";
+import { useCart } from "@/lib/cart";
 import { CATEGORIES } from "@/data/products";
+import logo from "@/assets/elite-logo.png";
 
 export function Header() {
   const { lang, setLang, currency, setCurrency, t } = useI18n();
   const { ids } = useWishlist();
+  const { count, openCart } = useCart();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [currencyOpen, setCurrencyOpen] = useState(false);
 
@@ -20,12 +23,17 @@ export function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-background border-b border-border">
+    <header className="sticky top-0 z-40 bg-background border-b border-border">
       <div className="container-elite">
         <div className="flex items-center justify-between h-20 gap-6">
-          <Link to="/" className="flex flex-col leading-none shrink-0">
-            <span className="font-display text-2xl md:text-3xl tracking-tight">Elite</span>
-            <span className="text-[10px] tracking-[0.3em] text-muted-foreground uppercase">Professional</span>
+          <Link to="/" aria-label="Elite Professional" className="shrink-0 flex items-center">
+            <img
+              src={logo}
+              alt="Elite Professional"
+              width={140}
+              height={56}
+              className="h-12 md:h-14 w-auto object-contain"
+            />
           </Link>
 
           <nav className="hidden lg:flex items-center gap-8 text-sm font-medium tracking-wide">
@@ -75,10 +83,10 @@ export function Header() {
                 </div>
               )}
             </div>
-            <button aria-label="Search" className="hover:text-gold transition-colors">
+            <button aria-label={t("search")} className="hover:text-gold transition-colors">
               <Search className="w-5 h-5" />
             </button>
-            <button aria-label="Wishlist" className="hover:text-gold transition-colors relative">
+            <button aria-label={t("wishlist")} className="hover:text-gold transition-colors relative">
               <Heart className="w-5 h-5" />
               {ids.size > 0 && (
                 <span className="absolute -top-1 -right-1 bg-gold text-gold-foreground text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
@@ -86,12 +94,17 @@ export function Header() {
                 </span>
               )}
             </button>
-            <button aria-label="Cart" className="hover:text-gold transition-colors">
+            <button aria-label={t("cart")} onClick={openCart} className="hover:text-gold transition-colors relative">
               <ShoppingBag className="w-5 h-5" />
+              {count > 0 && (
+                <span className="absolute -top-1 -right-1 bg-gold text-gold-foreground text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+                  {count}
+                </span>
+              )}
             </button>
             <button
               className="lg:hidden"
-              aria-label="Menu"
+              aria-label={t("menu")}
               onClick={() => setMobileOpen((v) => !v)}
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -110,7 +123,7 @@ export function Header() {
                 to="/shop"
                 className="whitespace-nowrap hover:text-gold transition-colors"
               >
-                {c.name}
+                {t(c.key)}
               </Link>
             ))}
           </div>
@@ -153,7 +166,7 @@ export function Header() {
             <div className="pt-3 grid grid-cols-2 gap-2 text-xs">
               {CATEGORIES.map((c) => (
                 <Link key={c.slug} to="/shop" onClick={() => setMobileOpen(false)} className="py-1">
-                  {c.name}
+                  {t(c.key)}
                 </Link>
               ))}
             </div>

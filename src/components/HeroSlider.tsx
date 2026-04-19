@@ -3,6 +3,7 @@ import Autoplay from "embla-carousel-autoplay";
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
+import { useI18n } from "@/lib/i18n";
 
 import s1 from "@/assets/hero-haircare.jpg";
 import s2 from "@/assets/hero-haircolor.jpg";
@@ -11,39 +12,15 @@ import s4 from "@/assets/hero-skincare.jpg";
 import s5 from "@/assets/hero-tools.jpg";
 
 const slides = [
-  {
-    image: s1,
-    eyebrow: "HAIR CARE",
-    title: "Luxurious Shampoo",
-    text: "Our luxurious Shampoo gently cleanses and nourishes your hair, leaving it soft, shiny, and manageable.",
-  },
-  {
-    image: s2,
-    eyebrow: "HAIR COLOR",
-    title: "133+ Shades",
-    text: "Vibrant, long-lasting permanent color formulated with multivitamins and gentle care.",
-  },
-  {
-    image: s3,
-    eyebrow: "ELECTRONICS",
-    title: "Salon-Grade Tools",
-    text: "Professional dryers, straighteners and trimmers engineered for daily salon performance.",
-  },
-  {
-    image: s4,
-    eyebrow: "SKIN CARE",
-    title: "Glow Restored",
-    text: "Treatments and serums chosen by professionals for visible, lasting results.",
-  },
-  {
-    image: s5,
-    eyebrow: "TOOLS & ACCESSORIES",
-    title: "Precision Crafted",
-    text: "From brushes to clippers — the equipment your craft deserves.",
-  },
+  { image: s1, key: "haircare" },
+  { image: s2, key: "haircolor" },
+  { image: s3, key: "electronics" },
+  { image: s4, key: "skincare" },
+  { image: s5, key: "tools" },
 ];
 
 export function HeroSlider() {
+  const { t } = useI18n();
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
     Autoplay({ delay: 5500, stopOnInteraction: false }),
   ]);
@@ -71,7 +48,7 @@ export function HeroSlider() {
             >
               <img
                 src={slide.image}
-                alt={slide.title}
+                alt={t(`hero_${slide.key}_title`)}
                 className="absolute inset-0 w-full h-full object-cover"
                 loading={i === 0 ? "eager" : "lazy"}
               />
@@ -91,19 +68,19 @@ export function HeroSlider() {
                       className="max-w-2xl text-white"
                     >
                       <div className="text-xs tracking-[0.4em] mb-4 text-gold">
-                        {slide.eyebrow}
+                        {t(`hero_${slide.key}_eyebrow`)}
                       </div>
                       <h1 className="font-display text-4xl md:text-6xl lg:text-7xl leading-[1.05] mb-5">
-                        {slide.title}
+                        {t(`hero_${slide.key}_title`)}
                       </h1>
                       <p className="text-base md:text-lg text-white/85 max-w-xl mb-8 leading-relaxed">
-                        {slide.text}
+                        {t(`hero_${slide.key}_text`)}
                       </p>
                       <Link
                         to="/shop"
                         className="inline-flex items-center px-8 py-3.5 bg-white text-primary text-xs tracking-[0.25em] font-medium hover:bg-gold hover:text-gold-foreground transition-colors"
                       >
-                        GO TO SHOP
+                        {t("go_to_shop")}
                       </Link>
                     </motion.div>
                   )}
