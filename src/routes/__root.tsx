@@ -1,12 +1,14 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+import { I18nProvider } from "@/lib/i18n";
+import { WishlistProvider } from "@/lib/wishlist";
 
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
+        <h1 className="font-display text-7xl text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           The page you're looking for doesn't exist or has been moved.
@@ -14,9 +16,9 @@ function NotFoundComponent() {
         <div className="mt-6">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center px-6 py-3 bg-primary text-xs tracking-[0.25em] text-primary-foreground hover:bg-gold hover:text-gold-foreground transition-colors"
           >
-            Go home
+            GO HOME
           </Link>
         </div>
       </div>
@@ -29,19 +31,29 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Elite Professional — UAE Beauty & Salon Supply" },
+      {
+        name: "description",
+        content:
+          "Elite Professional UAE — premium hair care, hair color, salon electronics, tools & accessories since 2001. Free delivery in UAE.",
+      },
+      { name: "author", content: "Elite Professional" },
+      { property: "og:title", content: "Elite Professional — UAE Beauty Supply" },
+      {
+        property: "og:description",
+        content:
+          "Premium professional beauty & salon supplies. Hair care, color, electronics, tools and more.",
+      },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: appCss,
+        href: "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Cairo:wght@400;500;600;700&display=swap",
       },
     ],
   }),
@@ -65,5 +77,11 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-  return <Outlet />;
+  return (
+    <I18nProvider>
+      <WishlistProvider>
+        <Outlet />
+      </WishlistProvider>
+    </I18nProvider>
+  );
 }
