@@ -9,6 +9,7 @@ import { DealsBanner, SaleBanner } from "@/components/PromoBanners";
 import { InstagramFeed } from "@/components/InstagramFeed";
 import { Testimonials } from "@/components/Testimonials";
 import { PRODUCTS } from "@/data/products";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -30,32 +31,33 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const { t } = useI18n();
   return (
     <Layout>
       <HeroSlider />
 
       <section className="container-elite py-20 md:py-28">
         <SectionTitle
-          eyebrow="ELITE PROFESSIONAL"
-          title="Shop by Category"
-          subtitle="Check out our broad variety of categories designed to meet your specific needs."
+          eyebrow={t("shop_by_category_eyebrow")}
+          title={t("shop_by_category_title")}
+          subtitle={t("shop_by_category_sub")}
         />
         <CategoryGrid />
       </section>
 
       <section className="py-16 md:py-20">
         <div className="container-elite mb-10 text-center">
-          <div className="text-[11px] tracking-[0.4em] text-gold mb-3">SHOP BY BRAND</div>
-          <h2 className="font-display text-3xl md:text-5xl">We put the world in your hands</h2>
+          <div className="text-[11px] tracking-[0.4em] text-gold mb-3">{t("shop_by_brand_eyebrow")}</div>
+          <h2 className="font-display text-3xl md:text-5xl">{t("shop_by_brand_title")}</h2>
         </div>
         <BrandStrip />
       </section>
 
       <section className="container-elite py-16 md:py-24">
         <SectionTitle
-          eyebrow="DISCOVER THE GREATNESS"
-          title="Featured Products"
-          subtitle="Check out our broad variety of products our customer likes."
+          eyebrow={t("featured_eyebrow")}
+          title={t("featured_title")}
+          subtitle={t("featured_sub")}
         />
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           {PRODUCTS.map((p) => (
@@ -70,13 +72,9 @@ function Index() {
       <Testimonials />
 
       <section className="container-elite py-20 md:py-28 text-center max-w-3xl">
-        <div className="text-[11px] tracking-[0.4em] text-gold mb-3">ABOUT US</div>
-        <h2 className="font-display text-3xl md:text-5xl mb-6">Crafted with passion since 2001</h2>
-        <p className="text-muted-foreground leading-relaxed text-lg">
-          Elite professional is a self-established company, since 2001. Relentlessly, we develop new
-          ideas. Concepts and technologies to maintain the point of concept (POC). We combine
-          attractiveness and individuality with user friendliness and cost efficiency products.
-        </p>
+        <div className="text-[11px] tracking-[0.4em] text-gold mb-3">{t("about_eyebrow")}</div>
+        <h2 className="font-display text-3xl md:text-5xl mb-6">{t("about_title_short")}</h2>
+        <p className="text-muted-foreground leading-relaxed text-lg">{t("about_long")}</p>
       </section>
     </Layout>
   );

@@ -1,7 +1,9 @@
 import { Instagram } from "lucide-react";
 import { PRODUCTS } from "@/data/products";
+import { useI18n } from "@/lib/i18n";
 
 export function InstagramFeed() {
+  const { t } = useI18n();
   const tiles = PRODUCTS.slice(0, 8);
   return (
     <section className="container-elite my-16 md:my-24">
@@ -15,9 +17,7 @@ export function InstagramFeed() {
           <Instagram className="w-6 h-6" />
           <span className="font-display text-2xl md:text-3xl">@elite_professional</span>
         </a>
-        <div className="text-sm text-muted-foreground mt-2">
-          335 posts · 5,019 followers
-        </div>
+        <div className="text-sm text-muted-foreground mt-2">{t("ig_followers")}</div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
@@ -49,7 +49,7 @@ export function InstagramFeed() {
           rel="noopener noreferrer"
           className="inline-flex px-8 py-3.5 border border-foreground text-xs tracking-[0.25em] font-medium hover:bg-primary hover:text-primary-foreground transition-colors"
         >
-          FOLLOW ON INSTAGRAM
+          {t("follow_instagram")}
         </a>
       </div>
     </section>
