@@ -39,7 +39,7 @@ export const Route = createRootRoute({
           "Elite Professional UAE — premium hair care, hair color, salon electronics, tools & accessories since 2001. Free delivery in UAE.",
       },
       { name: "author", content: "Elite Professional" },
-      { property: "og:title", content: "Elite Professional — UAE Beauty Supply" },
+      { property: "og:title", content: "Elite Professional — UAE Beauty & Salon Supply" },
       {
         property: "og:description",
         content:
@@ -47,6 +47,12 @@ export const Route = createRootRoute({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Elite Professional — UAE Beauty & Salon Supply" },
+      { name: "description", content: "An e-commerce website clone for Elite Professional, a UAE beauty supply store." },
+      { property: "og:description", content: "An e-commerce website clone for Elite Professional, a UAE beauty supply store." },
+      { name: "twitter:description", content: "An e-commerce website clone for Elite Professional, a UAE beauty supply store." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b115c691-67a7-4d31-a712-f529b12b771e/id-preview-590bc808--6e7b2188-7e4b-475d-83ef-1d441fffd9be.lovable.app-1776604513713.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b115c691-67a7-4d31-a712-f529b12b771e/id-preview-590bc808--6e7b2188-7e4b-475d-83ef-1d441fffd9be.lovable.app-1776604513713.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
