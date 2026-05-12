@@ -14,7 +14,10 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BlogsRouteImport } from './routes/blogs'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ProductsProductIdRouteImport } from './routes/products.$productId'
+import { Route as AdminNewRouteImport } from './routes/admin.new'
+import { Route as AdminSlugRouteImport } from './routes/admin.$slug'
 
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
@@ -41,9 +44,24 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductsProductIdRoute = ProductsProductIdRouteImport.update({
   id: '/products/$productId',
   path: '/products/$productId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminNewRoute = AdminNewRouteImport.update({
+  id: '/admin/new',
+  path: '/admin/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSlugRoute = AdminSlugRouteImport.update({
+  id: '/admin/$slug',
+  path: '/admin/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -53,7 +71,10 @@ export interface FileRoutesByFullPath {
   '/blogs': typeof BlogsRoute
   '/contact': typeof ContactRoute
   '/shop': typeof ShopRoute
+  '/admin/$slug': typeof AdminSlugRoute
+  '/admin/new': typeof AdminNewRoute
   '/products/$productId': typeof ProductsProductIdRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -61,7 +82,10 @@ export interface FileRoutesByTo {
   '/blogs': typeof BlogsRoute
   '/contact': typeof ContactRoute
   '/shop': typeof ShopRoute
+  '/admin/$slug': typeof AdminSlugRoute
+  '/admin/new': typeof AdminNewRoute
   '/products/$productId': typeof ProductsProductIdRoute
+  '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -70,7 +94,10 @@ export interface FileRoutesById {
   '/blogs': typeof BlogsRoute
   '/contact': typeof ContactRoute
   '/shop': typeof ShopRoute
+  '/admin/$slug': typeof AdminSlugRoute
+  '/admin/new': typeof AdminNewRoute
   '/products/$productId': typeof ProductsProductIdRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -80,9 +107,21 @@ export interface FileRouteTypes {
     | '/blogs'
     | '/contact'
     | '/shop'
+    | '/admin/$slug'
+    | '/admin/new'
     | '/products/$productId'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/blogs' | '/contact' | '/shop' | '/products/$productId'
+  to:
+    | '/'
+    | '/about'
+    | '/blogs'
+    | '/contact'
+    | '/shop'
+    | '/admin/$slug'
+    | '/admin/new'
+    | '/products/$productId'
+    | '/admin'
   id:
     | '__root__'
     | '/'
@@ -90,7 +129,10 @@ export interface FileRouteTypes {
     | '/blogs'
     | '/contact'
     | '/shop'
+    | '/admin/$slug'
+    | '/admin/new'
     | '/products/$productId'
+    | '/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -99,7 +141,10 @@ export interface RootRouteChildren {
   BlogsRoute: typeof BlogsRoute
   ContactRoute: typeof ContactRoute
   ShopRoute: typeof ShopRoute
+  AdminSlugRoute: typeof AdminSlugRoute
+  AdminNewRoute: typeof AdminNewRoute
   ProductsProductIdRoute: typeof ProductsProductIdRoute
+  AdminIndexRoute: typeof AdminIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -139,11 +184,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/products/$productId': {
       id: '/products/$productId'
       path: '/products/$productId'
       fullPath: '/products/$productId'
       preLoaderRoute: typeof ProductsProductIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/new': {
+      id: '/admin/new'
+      path: '/admin/new'
+      fullPath: '/admin/new'
+      preLoaderRoute: typeof AdminNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/$slug': {
+      id: '/admin/$slug'
+      path: '/admin/$slug'
+      fullPath: '/admin/$slug'
+      preLoaderRoute: typeof AdminSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -155,8 +221,20 @@ const rootRouteChildren: RootRouteChildren = {
   BlogsRoute: BlogsRoute,
   ContactRoute: ContactRoute,
   ShopRoute: ShopRoute,
+  AdminSlugRoute: AdminSlugRoute,
+  AdminNewRoute: AdminNewRoute,
   ProductsProductIdRoute: ProductsProductIdRoute,
+  AdminIndexRoute: AdminIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
