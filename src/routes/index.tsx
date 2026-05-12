@@ -8,8 +8,8 @@ import { ProductCard } from "@/components/ProductCard";
 import { DealsBanner, SaleBanner } from "@/components/PromoBanners";
 import { InstagramFeed } from "@/components/InstagramFeed";
 import { Testimonials } from "@/components/Testimonials";
-import { PRODUCTS } from "@/data/products";
 import { useI18n } from "@/lib/i18n";
+import { useProducts } from "@/lib/products-api";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -32,6 +32,11 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const { t } = useI18n();
+  const { data: allProducts = [] } = useProducts();
+  const featured = (allProducts.filter((p) => (p as { isFeatured?: boolean }).isFeatured).length > 0
+    ? allProducts.filter((p) => (p as { isFeatured?: boolean }).isFeatured)
+    : allProducts
+  ).slice(0, 12);
   return (
     <Layout>
       <HeroSlider />
@@ -60,7 +65,7 @@ function Index() {
           subtitle={t("featured_sub")}
         />
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {PRODUCTS.map((p) => (
+          {featured.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
         </div>
