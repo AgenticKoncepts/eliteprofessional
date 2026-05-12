@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          name_ar: string | null
+          parent_slug: string | null
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          name_ar?: string | null
+          parent_slug?: string | null
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          name_ar?: string | null
+          parent_slug?: string | null
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           created_at: string
@@ -68,6 +101,87 @@ export type Database = {
           subtotal_aed?: number
           total_aed?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          brand: string | null
+          category: string | null
+          created_at: string
+          description: string | null
+          description_ar: string | null
+          id: string
+          images: Json
+          in_stock: boolean
+          is_featured: boolean
+          is_published: boolean
+          name: string
+          name_ar: string | null
+          price_aed: number
+          price_max_aed: number | null
+          primary_image: string | null
+          short_description: string | null
+          sku: string | null
+          slug: string
+          sort_order: number
+          source_price_usd: number | null
+          source_url: string | null
+          stock: number
+          updated_at: string
+          variants: Json
+        }
+        Insert: {
+          brand?: string | null
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          description_ar?: string | null
+          id?: string
+          images?: Json
+          in_stock?: boolean
+          is_featured?: boolean
+          is_published?: boolean
+          name: string
+          name_ar?: string | null
+          price_aed?: number
+          price_max_aed?: number | null
+          primary_image?: string | null
+          short_description?: string | null
+          sku?: string | null
+          slug: string
+          sort_order?: number
+          source_price_usd?: number | null
+          source_url?: string | null
+          stock?: number
+          updated_at?: string
+          variants?: Json
+        }
+        Update: {
+          brand?: string | null
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          description_ar?: string | null
+          id?: string
+          images?: Json
+          in_stock?: boolean
+          is_featured?: boolean
+          is_published?: boolean
+          name?: string
+          name_ar?: string | null
+          price_aed?: number
+          price_max_aed?: number | null
+          primary_image?: string | null
+          short_description?: string | null
+          sku?: string | null
+          slug?: string
+          sort_order?: number
+          source_price_usd?: number | null
+          source_url?: string | null
+          stock?: number
+          updated_at?: string
+          variants?: Json
         }
         Relationships: []
       }

@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Layout } from "@/components/Layout";
 import { ProductCard } from "@/components/ProductCard";
-import { PRODUCTS, CATEGORIES } from "@/data/products";
+import { CATEGORIES } from "@/data/products";
 import { useI18n } from "@/lib/i18n";
 import { useState } from "react";
+import { useProducts } from "@/lib/products-api";
 
 export const Route = createFileRoute("/shop")({
   head: () => ({
@@ -27,8 +28,10 @@ export const Route = createFileRoute("/shop")({
 function ShopPage() {
   const { t } = useI18n();
   const [active, setActive] = useState<string>("All");
-  const cats = ["All", ...new Set(PRODUCTS.map((p) => p.category))];
-  const filtered = active === "All" ? PRODUCTS : PRODUCTS.filter((p) => p.category === active);
+  const { data: products = [], isLoading } = useProducts();
+
+  const cats = ["All", ...Array.from(new Set(products.map((p) => p.category))).sort()];
+  const filtered = active === "All" ? products : products.filter((p) => p.category === active);
 
   const labelFor = (c: string) => {
     if (c === "All") return t("shop_all");
@@ -61,19 +64,29 @@ function ShopPage() {
           ))}
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {filtered.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="text-center py-20 text-muted-foreground">Loading products…</div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-20 text-muted-foreground">No products yet.</div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {filtered.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        )}
 
         <div className="mt-16 pt-10 border-t border-border">
           <h2 className="font-display text-2xl mb-4 text-center">{t("shop_by_category_h2")}</h2>
           <div className="flex flex-wrap justify-center gap-3 text-xs tracking-wider">
-            {CATEGORIES.map((c) => (
-              <span key={c.slug} className="px-4 py-2 bg-secondary">
-                {t(c.key)}
-              </span>
+            {cats.filter((c) => c !== "All").map((c) => (
+              <button
+                key={c}
+                onClick={() => setActive(c)}
+                className="px-4 py-2 bg-secondary hover:bg-gold/10 transition-colors"
+              >
+                {labelFor(c)}
+              </button>
             ))}
           </div>
         </div>
