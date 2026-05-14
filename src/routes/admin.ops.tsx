@@ -303,7 +303,7 @@ function ImportsTab() {
     catch (e) { toast.error((e as Error).message); }
   };
   const retryOne = async (id: string) => {
-    try { const r = await retry({ data: { job_id: id } }); toast.success(`Started retry for ${r.started} URLs`); qc.invalidateQueries({ queryKey: ["import-jobs"] }); }
+    try { const r = await retry({ data: { job_id: id } }) as { started: number }; toast.success(`Started retry for ${r.started} URLs`); qc.invalidateQueries({ queryKey: ["import-jobs"] }); }
     catch (e) { toast.error((e as Error).message); }
   };
 
