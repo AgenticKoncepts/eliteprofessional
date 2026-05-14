@@ -327,7 +327,7 @@ function ImportsTab() {
           <tbody>
             {jobs.length === 0 && <tr><td colSpan={8} className="p-6 text-center text-muted-foreground text-xs">No import jobs yet.</td></tr>}
             {jobs.map((j) => (
-              <>
+              <Fragment key={j.id}>
                 <tr key={j.id} className="border-t border-border">
                   <td className="p-3 text-xs">{new Date(j.started_at).toLocaleString()}</td>
                   <td className="p-3 text-xs">{j.kind}</td>
