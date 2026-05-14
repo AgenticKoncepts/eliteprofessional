@@ -67,8 +67,8 @@ function OpsPage() {
 // ===================== VERIFY ============================
 function VerifyTab() {
   const { data: products = [] } = useAllProductsAdmin();
-  const fetchVerifs = useServerFn(listLatestVerifications);
-  const verify = useServerFn(verifyProduct);
+  const fetchVerifs = listLatestVerifications;
+  const verify = verifyProduct;
   const qc = useQueryClient();
   const { data: verifs = [] } = useQuery({ queryKey: ["verifs"], queryFn: () => fetchVerifs() });
   const [running, setRunning] = useState(false);
@@ -188,10 +188,10 @@ function Stat({ label, value, tone }: { label: string; value: number; tone?: "ok
 
 // ===================== CATEGORIES ============================
 function CategoriesTab() {
-  const fetchMaps = useServerFn(listCategoryMappings);
-  const sync = useServerFn(runCategorySync);
-  const upsert = useServerFn(upsertCategoryMapping);
-  const del = useServerFn(deleteCategoryMapping);
+  const fetchMaps = listCategoryMappings;
+  const sync = runCategorySync;
+  const upsert = upsertCategoryMapping;
+  const del = deleteCategoryMapping;
   const qc = useQueryClient();
 
   const { data, refetch } = useQuery({ queryKey: ["cat-maps"], queryFn: () => fetchMaps() });
@@ -278,10 +278,10 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 // ===================== IMPORTS ============================
 function ImportsTab() {
-  const fetchJobs = useServerFn(listImportJobs);
-  const refresh = useServerFn(refreshJobStatus);
-  const audit = useServerFn(getJobAudit);
-  const retry = useServerFn(retryFailed);
+  const fetchJobs = listImportJobs;
+  const refresh = refreshJobStatus;
+  const audit = getJobAudit;
+  const retry = retryFailed;
   const qc = useQueryClient();
 
   const { data: jobs = [] } = useQuery({ queryKey: ["import-jobs"], queryFn: () => fetchJobs(), refetchInterval: 15_000 });
