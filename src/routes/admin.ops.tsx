@@ -154,10 +154,10 @@ function VerifyTab() {
               return (
                 <tr key={p.slug} className="border-t border-border">
                   <td className="p-3 max-w-[24rem]"><div className="line-clamp-1">{p.name}</div><div className="text-xs text-muted-foreground">{p.slug}</div></td>
-                  <td className="p-3"><Cell flag={v?.name_match} diff={v?.diff && `${(v.diff as { name?: { db?: string; scraped?: string } }).name?.db ?? ""} → ${(v.diff as { name?: { db?: string; scraped?: string } }).name?.scraped ?? ""}`} /></td>
-                  <td className="p-3"><Cell flag={v?.price_match} diff={v?.diff && `${(v.diff as { price?: { db?: number; scraped?: number } }).price?.db} → ${(v.diff as { price?: { db?: number; scraped?: number } }).price?.scraped}`} /></td>
-                  <td className="p-3"><Cell flag={v?.variants_match} diff={v?.diff && `${(v.diff as { variants?: { db?: number; scraped?: number } }).variants?.db} / ${(v.diff as { variants?: { db?: number; scraped?: number } }).variants?.scraped}`} /></td>
-                  <td className="p-3"><Cell flag={v?.images_match} diff={v?.diff && `${(v.diff as { images?: { db?: number; scraped?: number } }).images?.db} / ${(v.diff as { images?: { db?: number; scraped?: number } }).images?.scraped}`} /></td>
+                  <td className="p-3"><Cell flag={v?.name_match} diff={v?.diff ? `${(v.diff as { name?: { db?: string; scraped?: string } }).name?.db ?? ""} → ${(v.diff as { name?: { db?: string; scraped?: string } }).name?.scraped ?? ""}` : null} /></td>
+                  <td className="p-3"><Cell flag={v?.price_match} diff={v?.diff ? `${(v.diff as { price?: { db?: number; scraped?: number } }).price?.db} → ${(v.diff as { price?: { db?: number; scraped?: number } }).price?.scraped}` : null} /></td>
+                  <td className="p-3"><Cell flag={v?.variants_match} diff={v?.diff ? `${(v.diff as { variants?: { db?: number; scraped?: number } }).variants?.db} / ${(v.diff as { variants?: { db?: number; scraped?: number } }).variants?.scraped}` : null} /></td>
+                  <td className="p-3"><Cell flag={v?.images_match} diff={v?.diff ? `${(v.diff as { images?: { db?: number; scraped?: number } }).images?.db} / ${(v.diff as { images?: { db?: number; scraped?: number } }).images?.scraped}` : null} /></td>
                   <td className="p-3 text-xs text-muted-foreground">{v ? new Date(v.checked_at).toLocaleString() : "—"}</td>
                   <td className="p-3 text-end">
                     <button onClick={() => verifyOne(p.slug)} className="px-2 py-1 border border-border text-xs hover:border-gold">CHECK</button>
