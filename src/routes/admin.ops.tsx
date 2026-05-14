@@ -76,7 +76,7 @@ function VerifyTab() {
   const fetchVerifs = listLatestVerifications;
   const verify = verifyProduct;
   const qc = useQueryClient();
-  const { data: verifs = [] } = useQuery({ queryKey: ["verifs"], queryFn: () => fetchVerifs() });
+  const { data: verifs = [] } = useQuery({ queryKey: ["verifs"], queryFn: () => fetchVerifs() as Promise<Verif[]> });
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [limit, setLimit] = useState(20);
@@ -200,7 +200,7 @@ function CategoriesTab() {
   const del = deleteCategoryMapping;
   const qc = useQueryClient();
 
-  const { data, refetch } = useQuery({ queryKey: ["cat-maps"], queryFn: () => fetchMaps() });
+  const { data, refetch } = useQuery({ queryKey: ["cat-maps"], queryFn: () => fetchMaps() as Promise<{ mappings: Mapping[]; unmapped: Unmapped[]; counts: Record<string, number> }> });
   const syncMut = useMutation({
     mutationFn: () => sync(),
     onSuccess: (r) => { toast.success(`Synced. Updated ${r.updated}. Unmapped: ${r.unmapped.length}`); refetch(); qc.invalidateQueries({ queryKey: ["admin-products"] }); qc.invalidateQueries({ queryKey: ["products"] }); qc.invalidateQueries({ queryKey: ["categories-distinct"] }); },
@@ -290,11 +290,11 @@ function ImportsTab() {
   const retry = retryFailed;
   const qc = useQueryClient();
 
-  const { data: jobs = [] } = useQuery({ queryKey: ["import-jobs"], queryFn: () => fetchJobs(), refetchInterval: 15_000 });
+  const { data: jobs = [] } = useQuery({ queryKey: ["import-jobs"], queryFn: () => fetchJobs() as Promise<ImportJob[]>, refetchInterval: 15_000 });
   const [openId, setOpenId] = useState<string | null>(null);
   const { data: auditRows = [] } = useQuery({
     queryKey: ["audit", openId],
-    queryFn: () => (openId ? audit({ data: { job_id: openId, status: "failed" } }) : Promise.resolve([])),
+    queryFn: () => (openId ? audit({ data: { job_id: openId, status: "failed" } }) as Promise<AuditRow[]> : Promise.resolve([] as AuditRow[])),
     enabled: !!openId,
   });
 
