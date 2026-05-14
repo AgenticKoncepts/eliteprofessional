@@ -299,7 +299,7 @@ function ImportsTab() {
   });
 
   const refreshOne = async (id: string) => {
-    try { const r = await refresh({ data: { job_id: id } }); toast.success(`${r.status}: ${r.completed}/${r.total}`); qc.invalidateQueries({ queryKey: ["import-jobs"] }); }
+    try { const r = await refresh({ data: { job_id: id } }) as { status: string; completed: number; total: number }; toast.success(`${r.status}: ${r.completed}/${r.total}`); qc.invalidateQueries({ queryKey: ["import-jobs"] }); }
     catch (e) { toast.error((e as Error).message); }
   };
   const retryOne = async (id: string) => {
