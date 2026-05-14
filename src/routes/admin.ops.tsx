@@ -18,6 +18,12 @@ import {
 } from "@/lib/ops.functions";
 import { useAllProductsAdmin } from "@/lib/products-api";
 
+type Verif = { id: string; product_slug: string; ok: boolean; error: string | null; name_match: boolean | null; price_match: boolean | null; variants_match: boolean | null; images_match: boolean | null; checked_at: string; diff: unknown };
+type Mapping = { id: string; raw_category: string; canonical_slug: string; canonical_name: string };
+type Unmapped = { raw_category: string; product_count: number };
+type ImportJob = { id: string; firecrawl_job_id: string | null; kind: string; status: string; total: number; completed: number; succeeded: number; failed: number; notes: string | null; started_at: string };
+type AuditRow = { id: string; source_url: string | null; error: string | null };
+
 export const Route = createFileRoute("/admin/ops")({
   head: () => ({ meta: [{ title: "Operations — Elite Admin" }, { name: "robots", content: "noindex" }] }),
   component: OpsPage,
