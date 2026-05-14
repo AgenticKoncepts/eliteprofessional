@@ -107,7 +107,7 @@ function VerifyTab() {
 
   const verifyOne = async (slug: string) => {
     try {
-      const r = await verify({ data: { slug } });
+      const r = await verify({ data: { slug } }) as { ok: boolean; error: string | null };
       toast[r.ok ? "success" : "warning"](r.ok ? "Match" : r.error || "Mismatch");
       qc.invalidateQueries({ queryKey: ["verifs"] });
     } catch (e) {
