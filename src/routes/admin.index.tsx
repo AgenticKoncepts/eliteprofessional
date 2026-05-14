@@ -56,9 +56,12 @@ function AdminProducts() {
             <h1 className="font-display text-3xl">Catalogue admin</h1>
             <p className="text-sm text-muted-foreground">{products.length} products in database. ⚠️ Open access — add login before publishing.</p>
           </div>
-          <Link to="/admin/new" className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground text-xs tracking-[0.25em]">
-            <Plus className="w-4 h-4" /> NEW PRODUCT
-          </Link>
+          <div className="flex gap-2">
+            <Link to="/admin/ops" className="inline-flex items-center gap-2 px-4 py-2 border border-border text-xs tracking-[0.25em] hover:border-gold">OPS &amp; AUDIT</Link>
+            <Link to="/admin/new" className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground text-xs tracking-[0.25em]">
+              <Plus className="w-4 h-4" /> NEW PRODUCT
+            </Link>
+          </div>
         </div>
 
         <div className="flex flex-wrap gap-3 mb-6">

@@ -47,6 +47,128 @@ export type Database = {
         }
         Relationships: []
       }
+      category_mappings: {
+        Row: {
+          canonical_name: string
+          canonical_slug: string
+          created_at: string
+          id: string
+          raw_category: string
+          updated_at: string
+        }
+        Insert: {
+          canonical_name: string
+          canonical_slug: string
+          created_at?: string
+          id?: string
+          raw_category: string
+          updated_at?: string
+        }
+        Update: {
+          canonical_name?: string
+          canonical_slug?: string
+          created_at?: string
+          id?: string
+          raw_category?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      import_audit: {
+        Row: {
+          created_at: string
+          error: string | null
+          id: string
+          job_id: string | null
+          scraped: Json | null
+          slug: string | null
+          source_url: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          job_id?: string | null
+          scraped?: Json | null
+          slug?: string | null
+          source_url?: string | null
+          status: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          job_id?: string | null
+          scraped?: Json | null
+          slug?: string | null
+          source_url?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_audit_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "import_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      import_jobs: {
+        Row: {
+          completed: number
+          created_at: string
+          failed: number
+          finished_at: string | null
+          firecrawl_job_id: string | null
+          id: string
+          kind: string
+          meta: Json
+          notes: string | null
+          source_url: string | null
+          started_at: string
+          status: string
+          succeeded: number
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          completed?: number
+          created_at?: string
+          failed?: number
+          finished_at?: string | null
+          firecrawl_job_id?: string | null
+          id?: string
+          kind?: string
+          meta?: Json
+          notes?: string | null
+          source_url?: string | null
+          started_at?: string
+          status?: string
+          succeeded?: number
+          total?: number
+          updated_at?: string
+        }
+        Update: {
+          completed?: number
+          created_at?: string
+          failed?: number
+          finished_at?: string | null
+          firecrawl_job_id?: string | null
+          id?: string
+          kind?: string
+          meta?: Json
+          notes?: string | null
+          source_url?: string | null
+          started_at?: string
+          status?: string
+          succeeded?: number
+          total?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           created_at: string
@@ -101,6 +223,51 @@ export type Database = {
           subtotal_aed?: number
           total_aed?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      product_verifications: {
+        Row: {
+          checked_at: string
+          diff: Json | null
+          error: string | null
+          id: string
+          images_match: boolean | null
+          name_match: boolean | null
+          ok: boolean
+          price_match: boolean | null
+          product_slug: string
+          scraped: Json | null
+          source_url: string | null
+          variants_match: boolean | null
+        }
+        Insert: {
+          checked_at?: string
+          diff?: Json | null
+          error?: string | null
+          id?: string
+          images_match?: boolean | null
+          name_match?: boolean | null
+          ok?: boolean
+          price_match?: boolean | null
+          product_slug: string
+          scraped?: Json | null
+          source_url?: string | null
+          variants_match?: boolean | null
+        }
+        Update: {
+          checked_at?: string
+          diff?: Json | null
+          error?: string | null
+          id?: string
+          images_match?: boolean | null
+          name_match?: boolean | null
+          ok?: boolean
+          price_match?: boolean | null
+          product_slug?: string
+          scraped?: Json | null
+          source_url?: string | null
+          variants_match?: boolean | null
         }
         Relationships: []
       }
