@@ -202,7 +202,7 @@ function CategoriesTab() {
 
   const { data, refetch } = useQuery({ queryKey: ["cat-maps"], queryFn: () => fetchMaps() as Promise<{ mappings: Mapping[]; unmapped: Unmapped[]; counts: Record<string, number> }> });
   const syncMut = useMutation({
-    mutationFn: () => sync(),
+    mutationFn: () => sync() as Promise<{ updated: number; unmapped: string[]; total: number }>,
     onSuccess: (r) => { toast.success(`Synced. Updated ${r.updated}. Unmapped: ${r.unmapped.length}`); refetch(); qc.invalidateQueries({ queryKey: ["admin-products"] }); qc.invalidateQueries({ queryKey: ["products"] }); qc.invalidateQueries({ queryKey: ["categories-distinct"] }); },
     onError: (e) => toast.error((e as Error).message),
   });
