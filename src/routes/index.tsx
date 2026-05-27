@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Layout } from "@/components/Layout";
+import { HeroVideo } from "@/components/HeroVideo";
+import { ScrollShowcase } from "@/components/ScrollShowcase";
 import { HeroSlider } from "@/components/HeroSlider";
 import { SectionTitle } from "@/components/SectionTitle";
 import { CategoryGrid } from "@/components/CategoryGrid";
@@ -39,7 +41,10 @@ function Index() {
   ).slice(0, 12);
   return (
     <Layout>
+      <HeroVideo />
+      <ScrollShowcase />
       <HeroSlider />
+
 
       <section className="container-elite py-20 md:py-28">
         <SectionTitle
