@@ -54,6 +54,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:description", content: "An e-commerce website clone for Elite Professional, a UAE beauty supply store." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b115c691-67a7-4d31-a712-f529b12b771e/id-preview-590bc808--6e7b2188-7e4b-475d-83ef-1d441fffd9be.lovable.app-1776604513713.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b115c691-67a7-4d31-a712-f529b12b771e/id-preview-590bc808--6e7b2188-7e4b-475d-83ef-1d441fffd9be.lovable.app-1776604513713.png" },
+      { name: "google-site-verification", content: "vxp32bGcP4kx0bGPg90-CRQ9JOoQFkrLUPRz5HAidmU" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
