@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BlogsRouteImport } from './routes/blogs'
@@ -20,6 +21,11 @@ import { Route as AdminOpsRouteImport } from './routes/admin.ops'
 import { Route as AdminNewRouteImport } from './routes/admin.new'
 import { Route as AdminSlugRouteImport } from './routes/admin.$slug'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/blogs': typeof BlogsRoute
   '/contact': typeof ContactRoute
   '/shop': typeof ShopRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/new': typeof AdminNewRoute
   '/admin/ops': typeof AdminOpsRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/blogs': typeof BlogsRoute
   '/contact': typeof ContactRoute
   '/shop': typeof ShopRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/new': typeof AdminNewRoute
   '/admin/ops': typeof AdminOpsRoute
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/blogs': typeof BlogsRoute
   '/contact': typeof ContactRoute
   '/shop': typeof ShopRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/new': typeof AdminNewRoute
   '/admin/ops': typeof AdminOpsRoute
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/blogs'
     | '/contact'
     | '/shop'
+    | '/sitemap.xml'
     | '/admin/$slug'
     | '/admin/new'
     | '/admin/ops'
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/blogs'
     | '/contact'
     | '/shop'
+    | '/sitemap.xml'
     | '/admin/$slug'
     | '/admin/new'
     | '/admin/ops'
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/blogs'
     | '/contact'
     | '/shop'
+    | '/sitemap.xml'
     | '/admin/$slug'
     | '/admin/new'
     | '/admin/ops'
@@ -153,6 +165,7 @@ export interface RootRouteChildren {
   BlogsRoute: typeof BlogsRoute
   ContactRoute: typeof ContactRoute
   ShopRoute: typeof ShopRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AdminSlugRoute: typeof AdminSlugRoute
   AdminNewRoute: typeof AdminNewRoute
   AdminOpsRoute: typeof AdminOpsRoute
@@ -162,6 +175,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shop': {
       id: '/shop'
       path: '/shop'
@@ -241,6 +261,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogsRoute: BlogsRoute,
   ContactRoute: ContactRoute,
   ShopRoute: ShopRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   AdminSlugRoute: AdminSlugRoute,
   AdminNewRoute: AdminNewRoute,
   AdminOpsRoute: AdminOpsRoute,
