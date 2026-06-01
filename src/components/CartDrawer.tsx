@@ -12,6 +12,7 @@ export function CartDrawer() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
+  const placeOrderFn = useServerFn(placeOrder);
   const [form, setForm] = useState({
     name: "",
     email: "",
