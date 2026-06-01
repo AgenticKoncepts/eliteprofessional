@@ -49,34 +49,23 @@ export function CartDrawer() {
     setSubmitting(true);
     setError(null);
     try {
-      const payload = {
-        customer_name: form.name.trim().slice(0, 200),
-        customer_email: form.email.trim().slice(0, 200),
-        customer_phone: form.phone.trim().slice(0, 50),
-        shipping_address: form.address.trim().slice(0, 500),
-        shipping_city: form.city.trim().slice(0, 100),
-        shipping_country: form.country.trim().slice(0, 100),
-        shipping_notes: form.notes.trim().slice(0, 500) || null,
-        items: items.map((i) => ({
-          product_id: i.productId,
-          name: i.name,
-          variant: i.variant ?? null,
-          price_aed: i.priceAed,
-          qty: i.qty,
-        })),
-        subtotal_aed: subtotalAed,
-        total_aed: subtotalAed,
-        currency: "AED",
-        status: "pending",
-      };
-      const { data, error: insertErr } = await supabase
-        .from("orders" as never)
-        .insert(payload as never)
-        .select("order_number")
-        .single();
-      if (insertErr) throw insertErr;
-      const num = (data as { order_number?: string } | null)?.order_number ?? null;
-      setOrderNumber(num);
+      const result = await placeOrderFn({
+        data: {
+          customer_name: form.name.trim().slice(0, 200),
+          customer_email: form.email.trim().slice(0, 200),
+          customer_phone: form.phone.trim().slice(0, 50),
+          shipping_address: form.address.trim().slice(0, 500),
+          shipping_city: form.city.trim().slice(0, 100),
+          shipping_country: form.country.trim().slice(0, 100),
+          shipping_notes: form.notes.trim().slice(0, 500) || null,
+          items: items.map((i) => ({
+            product_id: i.productId,
+            variant: i.variant ?? null,
+            qty: i.qty,
+          })),
+        },
+      });
+      setOrderNumber(result?.order_number ?? null);
       clear();
       setView("success");
     } catch (err) {
