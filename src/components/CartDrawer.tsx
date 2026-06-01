@@ -2,7 +2,8 @@ import { X, Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useCart } from "@/lib/cart";
 import { useI18n } from "@/lib/i18n";
-import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { placeOrder } from "@/lib/orders.functions";
 
 export function CartDrawer() {
   const { items, isOpen, closeCart, setQty, remove, subtotalAed, count, clear } = useCart();
