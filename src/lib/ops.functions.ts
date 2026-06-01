@@ -1,5 +1,25 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
+import { requireAdmin } from "@/lib/admin-middleware";
+
+const MAX_URLS = 100;
+const MAX_URL_LEN = 2048;
+function validateUrls(urls: unknown): string[] {
+  if (!Array.isArray(urls)) throw new Error("urls must be an array");
+  if (urls.length === 0) throw new Error("No URLs provided");
+  if (urls.length > MAX_URLS) throw new Error(`Too many URLs (max ${MAX_URLS})`);
+  const out: string[] = [];
+  for (const raw of urls) {
+    if (typeof raw !== "string" || raw.length === 0 || raw.length > MAX_URL_LEN) {
+      throw new Error("Invalid URL");
+    }
+    let u: URL;
+    try { u = new URL(raw); } catch { throw new Error(`Invalid URL: ${raw.slice(0, 80)}`); }
+    if (u.protocol !== "https:") throw new Error("Only https:// URLs are allowed");
+    out.push(u.toString());
+  }
+  return out;
+}
 
 function admin() {
   const url = process.env.SUPABASE_URL!;
@@ -55,6 +75,7 @@ function approxEq(a: number, b: number, tol = 0.05) {
 // VERIFICATION
 // =========================================================================
 export const verifyProduct = createServerFn({ method: "POST" })
+  .middleware([requireAdmin])
   .inputValidator((d: { slug: string }) => d)
   .handler(async ({ data }) => {
     const sb = admin();
@@ -107,7 +128,9 @@ export const verifyProduct = createServerFn({ method: "POST" })
     return { ok, diff, error: err };
   });
 
-export const listLatestVerifications = createServerFn({ method: "GET" }).handler(async () => {
+export const listLatestVerifications = createServerFn({ method: "GET" })
+  .middleware([requireAdmin])
+  .handler(async () => {
   const sb = admin();
   const { data, error } = await sb
     .from("product_verifications")
@@ -121,7 +144,9 @@ export const listLatestVerifications = createServerFn({ method: "GET" }).handler
 // =========================================================================
 // CATEGORY SYNC
 // =========================================================================
-export const runCategorySync = createServerFn({ method: "POST" }).handler(async () => {
+export const runCategorySync = createServerFn({ method: "POST" })
+  .middleware([requireAdmin])
+  .handler(async () => {
   const sb = admin();
   const { data: maps } = await sb.from("category_mappings").select("raw_category,canonical_name");
   const lookup = new Map<string, string>();
@@ -151,7 +176,9 @@ export const runCategorySync = createServerFn({ method: "POST" }).handler(async 
   return { updated, unmapped, total: prods?.length ?? 0 };
 });
 
-export const listCategoryMappings = createServerFn({ method: "GET" }).handler(async () => {
+export const listCategoryMappings = createServerFn({ method: "GET" })
+  .middleware([requireAdmin])
+  .handler(async () => {
   const sb = admin();
   const [{ data: maps }, { data: prods }] = await Promise.all([
     sb.from("category_mappings").select("*").order("raw_category"),
@@ -170,6 +197,7 @@ export const listCategoryMappings = createServerFn({ method: "GET" }).handler(as
 });
 
 export const upsertCategoryMapping = createServerFn({ method: "POST" })
+  .middleware([requireAdmin])
   .inputValidator((d: { raw_category: string; canonical_slug: string; canonical_name: string }) => d)
   .handler(async ({ data }) => {
     const sb = admin();
@@ -181,6 +209,7 @@ export const upsertCategoryMapping = createServerFn({ method: "POST" })
   });
 
 export const deleteCategoryMapping = createServerFn({ method: "POST" })
+  .middleware([requireAdmin])
   .inputValidator((d: { id: string }) => d)
   .handler(async ({ data }) => {
     const sb = admin();
@@ -192,7 +221,9 @@ export const deleteCategoryMapping = createServerFn({ method: "POST" })
 // =========================================================================
 // IMPORT JOBS
 // =========================================================================
-export const listImportJobs = createServerFn({ method: "GET" }).handler(async () => {
+export const listImportJobs = createServerFn({ method: "GET" })
+  .middleware([requireAdmin])
+  .handler(async () => {
   const sb = admin();
   const { data, error } = await sb
     .from("import_jobs")
@@ -204,6 +235,7 @@ export const listImportJobs = createServerFn({ method: "GET" }).handler(async ()
 });
 
 export const getJobAudit = createServerFn({ method: "POST" })
+  .middleware([requireAdmin])
   .inputValidator((d: { job_id: string; status?: string }) => d)
   .handler(async ({ data }) => {
     const sb = admin();
@@ -220,6 +252,7 @@ export const getJobAudit = createServerFn({ method: "POST" })
   });
 
 export const refreshJobStatus = createServerFn({ method: "POST" })
+  .middleware([requireAdmin])
   .inputValidator((d: { job_id: string }) => d)
   .handler(async ({ data }) => {
     const sb = admin();
@@ -253,9 +286,12 @@ export const refreshJobStatus = createServerFn({ method: "POST" })
   });
 
 export const startScrapeJob = createServerFn({ method: "POST" })
-  .inputValidator((d: { urls: string[]; notes?: string }) => d)
+  .middleware([requireAdmin])
+  .inputValidator((d: { urls: string[]; notes?: string }) => ({
+    urls: validateUrls(d.urls),
+    notes: typeof d.notes === "string" ? d.notes.slice(0, 500) : undefined,
+  }))
   .handler(async ({ data }) => {
-    if (!data.urls.length) throw new Error("No URLs provided");
     const sb = admin();
     const res = await fetch("https://api.firecrawl.dev/v2/batch/scrape", {
       method: "POST",
@@ -286,6 +322,7 @@ export const startScrapeJob = createServerFn({ method: "POST" })
   });
 
 export const retryFailed = createServerFn({ method: "POST" })
+  .middleware([requireAdmin])
   .inputValidator((d: { job_id: string }) => d)
   .handler(async ({ data }) => {
     const sb = admin();
