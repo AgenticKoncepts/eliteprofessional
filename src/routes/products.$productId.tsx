@@ -189,7 +189,7 @@ function ProductPage() {
                       selected === i ? "border-gold" : "border-transparent"
                     }`}
                   >
-                    <img src={src} alt="" className="w-full h-full object-cover" />
+                    <img src={src} alt={`${product.name} — view ${i + 1}`} className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
