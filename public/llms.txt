@@ -1,0 +1,17 @@
+# Elite Professional UAE
+
+> Premium beauty, hair care, hair color, salon electronics, tools and accessories distributor in the United Arab Emirates since 2001. Bilingual (English/Arabic) e-commerce with free UAE delivery.
+
+Elite Professional supplies salons, barbers, spas and retail customers across the UAE with professional-grade brands including KYO, Freelimix, 3ME and Logevy. All prices are in AED.
+
+## Pages
+
+- [Home](/): Featured brands, categories and new arrivals.
+- [Shop](/shop): Browse the full catalog by category and brand.
+- [About](/about): Company story — UAE beauty supply authority since 2001.
+- [Blogs](/blogs): Articles on hair care, salon technique and product education.
+- [Contact](/contact): Customer support, phone, email and Instagram.
+
+## Optional
+
+- [Sitemap](/sitemap.xml): Machine-readable list of all public URLs.
