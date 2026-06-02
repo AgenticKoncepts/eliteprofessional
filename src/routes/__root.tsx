@@ -40,6 +40,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Elite Professional UAE — premium hair care, hair color, salon electronics, tools & accessories since 2001. Free delivery in UAE.",
       },
       { name: "author", content: "Elite Professional" },
+      { property: "og:site_name", content: "Elite Professional UAE" },
       { property: "og:title", content: "Elite Professional — UAE Beauty & Salon Supply" },
       {
         property: "og:description",
@@ -49,11 +50,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Elite Professional — UAE Beauty & Salon Supply" },
-      { name: "description", content: "An e-commerce website clone for Elite Professional, a UAE beauty supply store." },
-      { property: "og:description", content: "An e-commerce website clone for Elite Professional, a UAE beauty supply store." },
-      { name: "twitter:description", content: "An e-commerce website clone for Elite Professional, a UAE beauty supply store." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b115c691-67a7-4d31-a712-f529b12b771e/id-preview-590bc808--6e7b2188-7e4b-475d-83ef-1d441fffd9be.lovable.app-1776604513713.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b115c691-67a7-4d31-a712-f529b12b771e/id-preview-590bc808--6e7b2188-7e4b-475d-83ef-1d441fffd9be.lovable.app-1776604513713.png" },
+      { name: "twitter:description", content: "Premium professional beauty & salon supplies in the UAE since 2001." },
       { name: "google-site-verification", content: "vxp32bGcP4kx0bGPg90-CRQ9JOoQFkrLUPRz5HAidmU" },
     ],
     links: [
@@ -63,6 +60,36 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Cairo:wght@400;500;600;700&display=swap",
+      },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              name: "Elite Professional UAE",
+              url: "https://eliteprofessional.lovable.app",
+              description:
+                "Premium hair care, hair color, salon electronics, tools and accessories distributor in the UAE since 2001.",
+              foundingDate: "2001",
+              areaServed: "AE",
+              contactPoint: {
+                "@type": "ContactPoint",
+                telephone: "+971-50-884-4641",
+                email: "info@eliteprofessionaluae.com",
+                contactType: "customer service",
+              },
+            },
+            {
+              "@type": "WebSite",
+              name: "Elite Professional UAE",
+              url: "https://eliteprofessional.lovable.app",
+            },
+          ],
+        }),
       },
     ],
   }),

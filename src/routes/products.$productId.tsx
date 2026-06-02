@@ -6,8 +6,82 @@ import { useWishlist } from "@/lib/wishlist";
 import { Heart, Minus, Plus, Truck, Shield, Check } from "lucide-react";
 import { useState } from "react";
 import { useProductBySlug } from "@/lib/products-api";
+import { supabase } from "@/integrations/supabase/client";
+import { dbToProduct, type DbProduct } from "@/lib/products-api";
+
+const SITE_URL = "https://eliteprofessional.lovable.app";
+
+function truncate(s: string, n: number) {
+  if (s.length <= n) return s;
+  return s.slice(0, n - 1).trimEnd() + "…";
+}
 
 export const Route = createFileRoute("/products/$productId")({
+  loader: async ({ params }) => {
+    const { data } = await supabase
+      .from("products")
+      .select("*")
+      .eq("slug", params.productId)
+      .maybeSingle();
+    if (!data) return { product: null as ReturnType<typeof dbToProduct> | null };
+    return { product: dbToProduct(data as unknown as DbProduct) };
+  },
+  head: ({ loaderData, params }) => {
+    const p = loaderData?.product;
+    if (!p) {
+      return {
+        meta: [
+          { title: "Product not found — Elite Professional UAE" },
+          { name: "description", content: "This product is no longer available." },
+        ],
+      };
+    }
+    const title = truncate(`${p.name} — Elite Professional UAE`, 60);
+    const rawDesc =
+      (p.description ?? `${p.name} by ${p.brand ?? "Elite Professional"} — shop premium ${p.category} in the UAE with free delivery.`).replace(/\s+/g, " ").trim();
+    const desc = truncate(rawDesc, 158).padEnd(50, " ").slice(0, 160);
+    const url = `${SITE_URL}/products/${params.productId}`;
+    const image = p.image?.startsWith("http") ? p.image : `${SITE_URL}${p.image ?? ""}`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "product" },
+        { property: "og:url", content: url },
+        ...(image ? [{ property: "og:image", content: image }, { name: "twitter:image", content: image }] : []),
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: desc },
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: p.name,
+            image: image ? [image] : undefined,
+            description: p.description ?? undefined,
+            sku: p.sku ?? undefined,
+            brand: p.brand ? { "@type": "Brand", name: p.brand } : undefined,
+            category: p.category ?? undefined,
+            offers: {
+              "@type": "Offer",
+              url,
+              priceCurrency: "AED",
+              price: p.priceAed,
+              availability:
+                (p as { stock?: number }).stock === 0
+                  ? "https://schema.org/OutOfStock"
+                  : "https://schema.org/InStock",
+            },
+          }),
+        },
+      ],
+    };
+  },
   component: ProductPage,
   errorComponent: ({ error, reset }) => {
     const router = useRouter();
@@ -115,7 +189,7 @@ function ProductPage() {
                       selected === i ? "border-gold" : "border-transparent"
                     }`}
                   >
-                    <img src={src} alt="" className="w-full h-full object-cover" />
+                    <img src={src} alt={`${product.name} — view ${i + 1}`} className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>

@@ -169,7 +169,7 @@ const dict: Record<string, { en: string; ar: string }> = {
   copyright_en: { en: "© 2026 Elite Professional", ar: "© ٢٠٢٦ إيليت بروفيشنال" },
 
   // About page
-  about_page_title: { en: "Welcome to our store!", ar: "أهلاً بكم في متجرنا!" },
+  about_page_title: { en: "About Elite Professional UAE", ar: "عن إيليت بروفيشنال الإمارات" },
   about_stat_years: { en: "Years of Experience", ar: "سنوات من الخبرة" },
   about_stat_customers: { en: "Loyal Customers", ar: "عميل وفي" },
   about_stat_brands: { en: "Premium Brands", ar: "علامة تجارية فاخرة" },
