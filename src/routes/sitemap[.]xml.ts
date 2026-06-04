@@ -20,15 +20,17 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/blogs", changefreq: "weekly", priority: "0.8" },
           { path: "/contact", changefreq: "monthly", priority: "0.7" },
           { path: "/shop", changefreq: "weekly", priority: "0.9" },
+          { path: "/brands", changefreq: "weekly", priority: "0.9" },
         ];
 
         const { data: products, error } = await supabaseAdmin
           .from("products")
-          .select("slug, updated_at")
+          .select("slug, updated_at, brand_slug")
           .eq("is_published", true)
           .order("updated_at", { ascending: false });
 
         if (!error && products) {
+          const brandSlugs = new Set<string>();
           for (const p of products) {
             entries.push({
               path: `/products/${p.slug}`,
@@ -36,8 +38,13 @@ export const Route = createFileRoute("/sitemap.xml")({
               priority: "0.8",
               lastmod: p.updated_at ? new Date(p.updated_at).toISOString().split("T")[0] : undefined,
             });
+            if (p.brand_slug) brandSlugs.add(p.brand_slug);
+          }
+          for (const b of brandSlugs) {
+            entries.push({ path: `/brands/${b}`, changefreq: "weekly", priority: "0.85" });
           }
         }
+
 
         const urls = entries.map((e) =>
           [

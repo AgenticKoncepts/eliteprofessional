@@ -67,19 +67,52 @@ export const Route = createFileRoute("/products/$productId")({
             sku: p.sku ?? undefined,
             brand: p.brand ? { "@type": "Brand", name: p.brand } : undefined,
             category: p.category ?? undefined,
-            offers: {
-              "@type": "Offer",
-              url,
-              priceCurrency: "AED",
-              price: p.priceAed,
-              availability:
-                (p as { stock?: number }).stock === 0
-                  ? "https://schema.org/OutOfStock"
-                  : "https://schema.org/InStock",
-            },
+            ...(p.variantOptions && p.variantOptions.length > 0
+              ? {
+                  hasVariant: p.variantOptions.map((v) => ({
+                    "@type": "Product",
+                    name: `${p.name} — ${v}`,
+                    sku: p.sku ? `${p.sku}-${v}` : undefined,
+                    offers: {
+                      "@type": "Offer",
+                      url,
+                      priceCurrency: "AED",
+                      price: p.priceAed,
+                      availability:
+                        (p as { stock?: number }).stock === 0
+                          ? "https://schema.org/OutOfStock"
+                          : "https://schema.org/InStock",
+                    },
+                  })),
+                }
+              : {}),
+            offers: p.priceMaxAed
+              ? {
+                  "@type": "AggregateOffer",
+                  url,
+                  priceCurrency: "AED",
+                  lowPrice: p.priceAed,
+                  highPrice: p.priceMaxAed,
+                  offerCount: Math.max(p.variantOptions?.length ?? 1, 1),
+                  availability:
+                    (p as { stock?: number }).stock === 0
+                      ? "https://schema.org/OutOfStock"
+                      : "https://schema.org/InStock",
+                }
+              : {
+                  "@type": "Offer",
+                  url,
+                  priceCurrency: "AED",
+                  price: p.priceAed,
+                  availability:
+                    (p as { stock?: number }).stock === 0
+                      ? "https://schema.org/OutOfStock"
+                      : "https://schema.org/InStock",
+                },
           }),
         },
       ],
+
     };
   },
   component: ProductPage,
