@@ -135,3 +135,57 @@ export function useCategoriesList() {
     },
   });
 }
+
+export interface BrandSummary {
+  brand: string;
+  brandSlug: string;
+  count: number;
+  heroImage: string | null;
+}
+
+export function useBrands() {
+  return useQuery({
+    queryKey: ["brands-summary"],
+    queryFn: async (): Promise<BrandSummary[]> => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("brand, brand_slug, primary_image, images, is_featured, sort_order")
+        .eq("is_published", true);
+      if (error) throw error;
+      const grouped = new Map<string, BrandSummary>();
+      (data ?? []).forEach((r: { brand: string | null; brand_slug: string | null; primary_image: string | null; images: string[] | null; is_featured: boolean | null }) => {
+        if (!r.brand || !r.brand_slug) return;
+        const existing = grouped.get(r.brand_slug);
+        const img = r.primary_image || r.images?.[0] || null;
+        if (!existing) {
+          grouped.set(r.brand_slug, { brand: r.brand, brandSlug: r.brand_slug, count: 1, heroImage: img });
+        } else {
+          existing.count += 1;
+          if (!existing.heroImage && img) existing.heroImage = img;
+          if (r.is_featured && img) existing.heroImage = img;
+        }
+      });
+      return Array.from(grouped.values()).sort((a, b) => b.count - a.count);
+    },
+  });
+}
+
+export function useProductsByBrandSlug(brandSlug: string) {
+  return useQuery({
+    queryKey: ["products-by-brand", brandSlug],
+    enabled: !!brandSlug,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("is_published", true)
+        .eq("brand_slug", brandSlug)
+        .order("is_featured", { ascending: false })
+        .order("sort_order")
+        .order("created_at");
+      if (error) throw error;
+      return (data as unknown as DbProduct[]).map(dbToProduct);
+    },
+  });
+}
+
