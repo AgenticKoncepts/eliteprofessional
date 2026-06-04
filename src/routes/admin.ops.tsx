@@ -15,8 +15,11 @@ import {
   getJobAudit,
   refreshJobStatus,
   retryFailed,
+  syncPricesForBrand,
+  listBrandsForSync,
 } from "@/lib/ops.functions";
 import { useAllProductsAdmin } from "@/lib/products-api";
+
 
 type Verif = { id: string; product_slug: string; ok: boolean; error: string | null; name_match: boolean | null; price_match: boolean | null; variants_match: boolean | null; images_match: boolean | null; checked_at: string; diff: unknown };
 type Mapping = { id: string; raw_category: string; canonical_slug: string; canonical_name: string };
@@ -29,7 +32,7 @@ export const Route = createFileRoute("/admin/ops")({
   component: OpsPage,
 });
 
-type Tab = "verify" | "categories" | "imports";
+type Tab = "verify" | "categories" | "imports" | "prices";
 
 function OpsPage() {
   const [tab, setTab] = useState<Tab>("verify");
@@ -49,6 +52,7 @@ function OpsPage() {
             ["verify", "VERIFY"],
             ["categories", "CATEGORIES"],
             ["imports", "IMPORTS"],
+            ["prices", "PRICES"],
           ] as const).map(([k, l]) => (
             <button
               key={k}
@@ -65,6 +69,8 @@ function OpsPage() {
         {tab === "verify" && <VerifyTab />}
         {tab === "categories" && <CategoriesTab />}
         {tab === "imports" && <ImportsTab />}
+        {tab === "prices" && <PricesTab />}
+
       </div>
     </Layout>
   );
