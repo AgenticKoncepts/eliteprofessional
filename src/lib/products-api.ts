@@ -27,7 +27,11 @@ export interface DbProduct {
   sort_order: number;
   created_at: string;
   updated_at: string;
+  product_type?: string | null;
+  product_subtype?: string | null;
+  brand_slug?: string | null;
 }
+
 
 export function dbToProduct(row: DbProduct): Product & {
   slug: string;
@@ -38,6 +42,9 @@ export function dbToProduct(row: DbProduct): Product & {
   isPublished?: boolean;
   sourceUrl?: string | null;
   sku?: string | null;
+  productType?: string | null;
+  productSubtype?: string | null;
+  brandSlug?: string | null;
 } {
   const fallbackImg = "/placeholder.svg";
   const image = row.primary_image || row.images?.[0] || fallbackImg;
@@ -60,8 +67,12 @@ export function dbToProduct(row: DbProduct): Product & {
     isPublished: row.is_published,
     sourceUrl: row.source_url,
     sku: row.sku,
+    productType: row.product_type ?? null,
+    productSubtype: row.product_subtype ?? null,
+    brandSlug: row.brand_slug ?? null,
   };
 }
+
 
 export function useProducts(opts?: { publishedOnly?: boolean; featuredOnly?: boolean }) {
   return useQuery({
