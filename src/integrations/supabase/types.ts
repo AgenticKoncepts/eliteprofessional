@@ -274,6 +274,7 @@ export type Database = {
       products: {
         Row: {
           brand: string | null
+          brand_slug: string | null
           category: string | null
           created_at: string
           description: string | null
@@ -288,6 +289,8 @@ export type Database = {
           price_aed: number
           price_max_aed: number | null
           primary_image: string | null
+          product_subtype: string | null
+          product_type: string | null
           short_description: string | null
           sku: string | null
           slug: string
@@ -300,6 +303,7 @@ export type Database = {
         }
         Insert: {
           brand?: string | null
+          brand_slug?: string | null
           category?: string | null
           created_at?: string
           description?: string | null
@@ -314,6 +318,8 @@ export type Database = {
           price_aed?: number
           price_max_aed?: number | null
           primary_image?: string | null
+          product_subtype?: string | null
+          product_type?: string | null
           short_description?: string | null
           sku?: string | null
           slug: string
@@ -326,6 +332,7 @@ export type Database = {
         }
         Update: {
           brand?: string | null
+          brand_slug?: string | null
           category?: string | null
           created_at?: string
           description?: string | null
@@ -340,6 +347,8 @@ export type Database = {
           price_aed?: number
           price_max_aed?: number | null
           primary_image?: string | null
+          product_subtype?: string | null
+          product_type?: string | null
           short_description?: string | null
           sku?: string | null
           slug?: string

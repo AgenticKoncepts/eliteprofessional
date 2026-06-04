@@ -27,7 +27,11 @@ export interface DbProduct {
   sort_order: number;
   created_at: string;
   updated_at: string;
+  product_type?: string | null;
+  product_subtype?: string | null;
+  brand_slug?: string | null;
 }
+
 
 export function dbToProduct(row: DbProduct): Product & {
   slug: string;
@@ -38,6 +42,9 @@ export function dbToProduct(row: DbProduct): Product & {
   isPublished?: boolean;
   sourceUrl?: string | null;
   sku?: string | null;
+  productType?: string | null;
+  productSubtype?: string | null;
+  brandSlug?: string | null;
 } {
   const fallbackImg = "/placeholder.svg";
   const image = row.primary_image || row.images?.[0] || fallbackImg;
@@ -60,8 +67,12 @@ export function dbToProduct(row: DbProduct): Product & {
     isPublished: row.is_published,
     sourceUrl: row.source_url,
     sku: row.sku,
+    productType: row.product_type ?? null,
+    productSubtype: row.product_subtype ?? null,
+    brandSlug: row.brand_slug ?? null,
   };
 }
+
 
 export function useProducts(opts?: { publishedOnly?: boolean; featuredOnly?: boolean }) {
   return useQuery({
@@ -124,3 +135,62 @@ export function useCategoriesList() {
     },
   });
 }
+
+export interface BrandSummary {
+  brand: string;
+  brandSlug: string;
+  count: number;
+  heroImage: string | null;
+}
+
+export function useBrands() {
+  return useQuery({
+    queryKey: ["brands-summary"],
+    queryFn: async (): Promise<BrandSummary[]> => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("brand, brand_slug, primary_image, images, is_featured, sort_order")
+        .eq("is_published", true);
+      if (error) throw error;
+      const grouped = new Map<string, BrandSummary>();
+      (data ?? []).forEach((r) => {
+        const brand = r.brand as string | null;
+        const brandSlug = r.brand_slug as string | null;
+        const primary = r.primary_image as string | null;
+        const imgs = Array.isArray(r.images) ? (r.images as unknown as string[]) : [];
+        if (!brand || !brandSlug) return;
+        const img = primary || imgs[0] || null;
+        const existing = grouped.get(brandSlug);
+        if (!existing) {
+          grouped.set(brandSlug, { brand, brandSlug, count: 1, heroImage: img });
+        } else {
+          existing.count += 1;
+          if (!existing.heroImage && img) existing.heroImage = img;
+          if (r.is_featured && img) existing.heroImage = img;
+        }
+      });
+
+      return Array.from(grouped.values()).sort((a, b) => b.count - a.count);
+    },
+  });
+}
+
+export function useProductsByBrandSlug(brandSlug: string) {
+  return useQuery({
+    queryKey: ["products-by-brand", brandSlug],
+    enabled: !!brandSlug,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("is_published", true)
+        .eq("brand_slug", brandSlug)
+        .order("is_featured", { ascending: false })
+        .order("sort_order")
+        .order("created_at");
+      if (error) throw error;
+      return (data as unknown as DbProduct[]).map(dbToProduct);
+    },
+  });
+}
+

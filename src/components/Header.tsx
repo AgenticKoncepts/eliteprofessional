@@ -17,10 +17,12 @@ export function Header() {
   const navItems = [
     { to: "/", label: t("home") },
     { to: "/shop", label: t("shop") },
+    { to: "/brands", label: "Brands" },
     { to: "/about", label: t("about") },
     { to: "/blogs", label: t("blogs") },
     { to: "/contact", label: t("contact") },
   ];
+
 
   return (
     <header className="sticky top-0 z-40 bg-background border-b border-border">

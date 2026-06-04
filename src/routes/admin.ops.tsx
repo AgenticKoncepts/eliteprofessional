@@ -15,8 +15,11 @@ import {
   getJobAudit,
   refreshJobStatus,
   retryFailed,
+  syncPricesForBrand,
+  listBrandsForSync,
 } from "@/lib/ops.functions";
 import { useAllProductsAdmin } from "@/lib/products-api";
+
 
 type Verif = { id: string; product_slug: string; ok: boolean; error: string | null; name_match: boolean | null; price_match: boolean | null; variants_match: boolean | null; images_match: boolean | null; checked_at: string; diff: unknown };
 type Mapping = { id: string; raw_category: string; canonical_slug: string; canonical_name: string };
@@ -29,7 +32,7 @@ export const Route = createFileRoute("/admin/ops")({
   component: OpsPage,
 });
 
-type Tab = "verify" | "categories" | "imports";
+type Tab = "verify" | "categories" | "imports" | "prices";
 
 function OpsPage() {
   const [tab, setTab] = useState<Tab>("verify");
@@ -49,6 +52,7 @@ function OpsPage() {
             ["verify", "VERIFY"],
             ["categories", "CATEGORIES"],
             ["imports", "IMPORTS"],
+            ["prices", "PRICES"],
           ] as const).map(([k, l]) => (
             <button
               key={k}
@@ -65,6 +69,8 @@ function OpsPage() {
         {tab === "verify" && <VerifyTab />}
         {tab === "categories" && <CategoriesTab />}
         {tab === "imports" && <ImportsTab />}
+        {tab === "prices" && <PricesTab />}
+
       </div>
     </Layout>
   );
@@ -363,6 +369,91 @@ function ImportsTab() {
             ))}
           </tbody>
         </table>
+      </div>
+    </div>
+  );
+}
+
+// ===================== PRICES ============================
+type BrandRow = { brand: string; brand_slug: string; count: number };
+type PriceDetail = { slug: string; from: number; to: number | null; status: "updated" | "unchanged" | "failed" };
+
+function PricesTab() {
+  const qc = useQueryClient();
+  const { data: brands = [] } = useQuery({
+    queryKey: ["brands-for-sync"],
+    queryFn: () => listBrandsForSync() as Promise<BrandRow[]>,
+  });
+  const [busy, setBusy] = useState<string | null>(null);
+  const [results, setResults] = useState<Record<string, { scanned: number; updated: number; unchanged: number; failed: number; details: PriceDetail[] }>>({});
+  const [limit, setLimit] = useState(25);
+
+  const runFor = async (slug: string) => {
+    setBusy(slug);
+    try {
+      const r = await syncPricesForBrand({ data: { brand_slug: slug, limit } }) as { scanned: number; updated: number; unchanged: number; failed: number; details: PriceDetail[] };
+      setResults((prev) => ({ ...prev, [slug]: r }));
+      toast.success(`${slug}: ${r.updated} updated, ${r.unchanged} unchanged, ${r.failed} failed (of ${r.scanned})`);
+      qc.invalidateQueries({ queryKey: ["products"] });
+      qc.invalidateQueries({ queryKey: ["admin-products"] });
+      qc.invalidateQueries({ queryKey: ["products-by-brand", slug] });
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="rounded-lg border border-border p-4">
+        <h2 className="font-display text-xl mb-1">Sync prices from official site</h2>
+        <p className="text-sm text-muted-foreground mb-4">
+          Scrapes each product's <code>source_url</code> with Firecrawl and updates AED price. Runs in batches —
+          re-click a brand to continue with the next oldest products.
+        </p>
+        <label className="text-xs tracking-wider block mb-2">Batch size (max 50)</label>
+        <input
+          type="number"
+          min={1}
+          max={50}
+          value={limit}
+          onChange={(e) => setLimit(Math.min(50, Math.max(1, Number(e.target.value) || 1)))}
+          className="w-24 px-3 py-2 border border-border bg-background text-sm"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {brands.map((b) => {
+          const r = results[b.brand_slug];
+          return (
+            <div key={b.brand_slug} className="border border-border p-4 flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-display text-lg">{b.brand}</div>
+                  <div className="text-xs text-muted-foreground">{b.count} products · slug: {b.brand_slug}</div>
+                </div>
+                <button
+                  onClick={() => runFor(b.brand_slug)}
+                  disabled={busy !== null}
+                  className="px-4 py-2 text-xs tracking-[0.25em] bg-primary text-primary-foreground disabled:opacity-50"
+                >
+                  {busy === b.brand_slug ? "SYNCING…" : "SYNC"}
+                </button>
+              </div>
+              {r && (
+                <div className="text-xs space-y-1 border-t border-border pt-3">
+                  <div>Scanned: <b>{r.scanned}</b> · Updated: <b className="text-gold">{r.updated}</b> · Unchanged: {r.unchanged} · Failed: <span className={r.failed ? "text-destructive" : ""}>{r.failed}</span></div>
+                  {r.details.filter((d) => d.status === "updated").slice(0, 6).map((d) => (
+                    <div key={d.slug} className="text-muted-foreground truncate">
+                      {d.slug}: {d.from} → {d.to}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
