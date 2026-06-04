@@ -361,3 +361,105 @@ export const retryFailed = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { started: urls.length, job: row };
   });
+
+// =========================================================================
+// PRICE SYNC (scrapes source URLs and updates DB price_aed)
+// =========================================================================
+async function fcScrapePrice(url: string): Promise<number | null> {
+  try {
+    const json = await fcScrape(url);
+    const v = Number((json as Record<string, unknown>).price_aed ?? 0);
+    if (!isFinite(v) || v <= 0) return null;
+    return v;
+  } catch {
+    return null;
+  }
+}
+
+async function mapWithConcurrency<T, R>(items: T[], limit: number, fn: (t: T, i: number) => Promise<R>): Promise<R[]> {
+  const out: R[] = new Array(items.length);
+  let cursor = 0;
+  const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (true) {
+      const i = cursor++;
+      if (i >= items.length) return;
+      out[i] = await fn(items[i], i);
+    }
+  });
+  await Promise.all(workers);
+  return out;
+}
+
+export const syncPricesForBrand = createServerFn({ method: "POST" })
+  .middleware([requireAdmin])
+  .inputValidator((d: { brand_slug: string; limit?: number }) => ({
+    brand_slug: String(d.brand_slug).slice(0, 80),
+    limit: Math.min(Math.max(Number(d.limit ?? 25), 1), 50),
+  }))
+  .handler(async ({ data }) => {
+    const sb = admin();
+    const { data: rows, error } = await sb
+      .from("products")
+      .select("slug,price_aed,source_url")
+      .eq("brand_slug", data.brand_slug)
+      .not("source_url", "is", null)
+      .order("updated_at", { ascending: true })
+      .limit(data.limit);
+    if (error) throw new Error(error.message);
+    const list = (rows ?? []) as { slug: string; price_aed: number; source_url: string }[];
+    if (!list.length) return { scanned: 0, updated: 0, unchanged: 0, failed: 0, details: [] };
+
+    const results = await mapWithConcurrency(list, 4, async (r) => {
+      const scraped = await fcScrapePrice(r.source_url);
+      return { slug: r.slug, db: Number(r.price_aed), scraped };
+    });
+
+    let updated = 0;
+    let unchanged = 0;
+    let failed = 0;
+    const details: { slug: string; from: number; to: number | null; status: "updated" | "unchanged" | "failed" }[] = [];
+    for (const r of results) {
+      if (r.scraped == null) {
+        failed++;
+        details.push({ slug: r.slug, from: r.db, to: null, status: "failed" });
+        continue;
+      }
+      if (Math.abs(r.scraped - r.db) < 0.01) {
+        unchanged++;
+        details.push({ slug: r.slug, from: r.db, to: r.scraped, status: "unchanged" });
+        continue;
+      }
+      const { error: upErr } = await sb
+        .from("products")
+        .update({ price_aed: r.scraped, updated_at: new Date().toISOString() })
+        .eq("slug", r.slug);
+      if (upErr) {
+        failed++;
+        details.push({ slug: r.slug, from: r.db, to: r.scraped, status: "failed" });
+      } else {
+        updated++;
+        details.push({ slug: r.slug, from: r.db, to: r.scraped, status: "updated" });
+      }
+    }
+    return { scanned: list.length, updated, unchanged, failed, details };
+  });
+
+export const listBrandsForSync = createServerFn({ method: "GET" })
+  .middleware([requireAdmin])
+  .handler(async () => {
+    const sb = admin();
+    const { data, error } = await sb
+      .from("products")
+      .select("brand,brand_slug")
+      .eq("is_published", true)
+      .not("brand_slug", "is", null);
+    if (error) throw new Error(error.message);
+    const counts = new Map<string, { brand: string; brand_slug: string; count: number }>();
+    for (const r of (data ?? []) as { brand: string | null; brand_slug: string | null }[]) {
+      if (!r.brand || !r.brand_slug) continue;
+      const existing = counts.get(r.brand_slug);
+      if (existing) existing.count++;
+      else counts.set(r.brand_slug, { brand: r.brand, brand_slug: r.brand_slug, count: 1 });
+    }
+    return Array.from(counts.values()).sort((a, b) => b.count - a.count);
+  });
