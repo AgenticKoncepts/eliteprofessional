@@ -30,8 +30,8 @@ const panels: Panel[] = [
   {
     img: gold,
     eyebrow: "ELITE PROFESSIONAL",
-    title: "Performance.",
-    italic: "Refined.",
+    title: "",
+    italic: "\u200B",
     body: "Marble podiums and gold smoke — a quiet luxury of tools, fragrance and accessories, hand-picked for the UAE's leading salons.",
     tint: "oklch(0.78 0.13 85)",
   },
