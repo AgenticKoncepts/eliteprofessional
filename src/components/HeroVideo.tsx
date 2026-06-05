@@ -89,11 +89,11 @@ export function HeroVideo() {
 
         <h1 className="font-display text-5xl md:text-7xl lg:text-[8.5rem] leading-[0.95] tracking-tight overflow-hidden">
           <span className="block">
-            <span className="hv-word inline-block mr-4">Performance.</span>
+            <span className="hv-word inline-block mr-4"></span>
           </span>
           <span className="block">
             <span className="hv-word inline-block mr-4 italic text-[oklch(0.78_0.13_85)]">
-              Refined.
+              {"\u200B"}
             </span>
           </span>
         </h1>
