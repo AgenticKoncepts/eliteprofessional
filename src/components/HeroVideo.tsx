@@ -98,9 +98,8 @@ export function HeroVideo() {
           </span>
         </h1>
 
-        <p className="hv-sub mt-6 max-w-xl text-base md:text-lg text-white/75 leading-relaxed">
-          Salon-grade hair care, color, electronics and tools — curated for the Emirates' most
-          discerning professionals. Delivered free across the UAE.
+        <p className="hv-sub mt-6 max-w-xl md:text-lg text-white/75 leading-relaxed text-sm font-sans font-normal">
+          {"\u200B"}
         </p>
 
         <div className="hv-cta mt-8 flex flex-wrap items-center gap-3">
