@@ -168,7 +168,6 @@ export function ScrollShowcase() {
                 loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/50 to-black/40" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/60" />
             </div>
           </div>
 
