@@ -1,9 +1,13 @@
-import { Heart } from "lucide-react";
+import { Heart, Sparkles } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
 import { useWishlist } from "@/lib/wishlist";
 import { useCart } from "@/lib/cart";
 import type { Product } from "@/data/products";
+
+export function deriveUseCase(p: Pick<Product, "productSubtype" | "productType" | "category">) {
+  return p.productSubtype || p.productType || p.category || "Professional Use";
+}
 
 export function ProductCard({ product }: { product: Product }) {
   const { formatPrice, t } = useI18n();
@@ -11,13 +15,11 @@ export function ProductCard({ product }: { product: Product }) {
   const { add } = useCart();
   const isWished = has(product.id);
   const hasVariants = (product.variants ?? 0) > 1;
+  const useCase = deriveUseCase(product);
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (hasVariants) {
-      // navigation handled by Link wrapper below; do nothing here
-      return;
-    }
+    if (hasVariants) return;
     add({
       productId: product.id,
       name: product.name,
@@ -55,7 +57,11 @@ export function ProductCard({ product }: { product: Product }) {
         />
       </Link>
 
-      <div className="p-4 md:p-5 flex flex-col gap-3">
+      <div className="p-4 md:p-5 flex flex-col gap-2.5">
+        <div className="inline-flex items-center gap-1.5 text-[9px] tracking-[0.28em] text-gold uppercase">
+          <Sparkles className="w-3 h-3" />
+          <span className="truncate">{useCase}</span>
+        </div>
         <Link
           to="/products/$productId"
           params={{ productId: product.id }}
