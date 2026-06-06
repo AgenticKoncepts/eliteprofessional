@@ -22,6 +22,10 @@ export interface Product {
   category: string;
   description?: string;
   description_ar?: string;
+  brand?: string | null;
+  productType?: string | null;
+  productSubtype?: string | null;
+  brandSlug?: string | null;
 }
 
 export const PRODUCTS: Product[] = [
