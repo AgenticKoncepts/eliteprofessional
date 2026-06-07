@@ -1,30 +1,25 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Layout } from "@/components/Layout";
 import { useI18n } from "@/lib/i18n";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useProducts } from "@/lib/products-api";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { ArrowRight, Heart, Sparkles } from "lucide-react";
-import { useCart } from "@/lib/cart";
-import { useWishlist } from "@/lib/wishlist";
+import { AnimatePresence, motion } from "framer-motion";
 import type { Product } from "@/data/products";
 import { deriveUseCase } from "@/components/ProductCard";
+import { BrandTile, type BrandTileData } from "@/components/BrandTile";
+import { BrandWorld } from "@/components/BrandWorld";
 
 export const Route = createFileRoute("/shop")({
+  validateSearch: (search: Record<string, unknown>): { brand?: string } => ({
+    brand: typeof search.brand === "string" ? search.brand : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Shop by Brand — Elite Professional UAE" },
       {
         name: "description",
         content:
-          "Explore every Elite Professional brand in its own animated gallery — KYO, Freelimix, 3ME Maestri, Arcocere and more. Free UAE delivery.",
+          "Explore every Elite Professional house in its own animated 3D gallery — KYO, Freelimix, 3ME Maestri, Arcocere and more. Free UAE delivery.",
       },
       { property: "og:title", content: "Shop by Brand — Elite Professional UAE" },
       {
@@ -36,304 +31,186 @@ export const Route = createFileRoute("/shop")({
   component: ShopPage,
 });
 
-function shortDesc(desc?: string, max = 160) {
-  if (!desc)
-    return "Salon-grade formulation engineered for professional results — luxurious texture, lasting performance.";
-  const clean = desc.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-  return clean.length > max ? clean.slice(0, max).trimEnd() + "…" : clean;
-}
-
-function TiltCard({ product }: { product: Product }) {
-  const { formatPrice, t } = useI18n();
-  const { add } = useCart();
-  const { has, toggle } = useWishlist();
-  const ref = useRef<HTMLDivElement>(null);
-  const mx = useMotionValue(0.5);
-  const my = useMotionValue(0.5);
-  const rx = useSpring(useTransform(my, [0, 1], [10, -10]), { stiffness: 200, damping: 20 });
-  const ry = useSpring(useTransform(mx, [0, 1], [-12, 12]), { stiffness: 200, damping: 20 });
-  const glareX = useTransform(mx, (v) => `${v * 100}%`);
-  const glareY = useTransform(my, (v) => `${v * 100}%`);
-
-  const isWished = has(product.id);
-  const hasVariants = (product.variants ?? 0) > 1;
-  const useCase = deriveUseCase(product);
-
-  function onMove(e: React.MouseEvent<HTMLDivElement>) {
-    const el = ref.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    mx.set((e.clientX - r.left) / r.width);
-    my.set((e.clientY - r.top) / r.height);
+// Tidy display label (DB has "FREELIMIX", "3ME MAESTRI", "DR.KRAUT" etc.)
+function tidyBrand(raw: string): string {
+  const t = raw.trim();
+  if (!t) return "Other";
+  // Keep all-caps that are 3 chars or fewer (KYO, 3ME) as-is
+  if (/^[A-Z0-9.\s'&-]{2,}$/.test(t) && t === t.toUpperCase()) {
+    return t
+      .toLowerCase()
+      .replace(/\b([a-z])/g, (m) => m.toUpperCase())
+      .replace(/\b(3me|kyo|sts|ppd)\b/gi, (m) => m.toUpperCase());
   }
-  function onLeave() {
-    mx.set(0.5);
-    my.set(0.5);
-  }
-
-  return (
-    <motion.div
-      ref={ref}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-      style={{ rotateX: rx, rotateY: ry, transformPerspective: 1000 }}
-      whileHover={{ scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 180, damping: 16 }}
-      className="relative h-full"
-    >
-      <article className="relative h-full flex flex-col bg-card border border-border/60 overflow-hidden shadow-[0_8px_30px_-12px_rgba(0,0,0,0.18)] hover:shadow-[0_30px_60px_-20px_rgba(0,0,0,0.35)] transition-shadow duration-500 [transform-style:preserve-3d]">
-        <button
-          aria-label="Add to wishlist"
-          onClick={() => toggle(product.id)}
-          className="absolute top-3 end-3 z-20 w-9 h-9 rounded-full bg-white/90 backdrop-blur flex items-center justify-center hover:bg-white"
-        >
-          <Heart className={`w-4 h-4 ${isWished ? "fill-price text-price" : "text-foreground"}`} />
-        </button>
-
-        <Link
-          to="/products/$productId"
-          params={{ productId: product.id }}
-          className="block aspect-[4/5] overflow-hidden bg-secondary/30 relative"
-        >
-          <motion.img
-            src={product.image}
-            alt={product.name}
-            loading="lazy"
-            className="w-full h-full object-cover"
-            style={{ translateZ: 40 }}
-            whileHover={{ scale: 1.06 }}
-            transition={{ duration: 0.6 }}
-          />
-          <motion.div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 mix-blend-overlay opacity-0 group-hover:opacity-100"
-            style={{
-              background: `radial-gradient(220px circle at ${glareX.get()} ${glareY.get()}, rgba(255,255,255,0.45), transparent 60%)`,
-            }}
-          />
-        </Link>
-
-        <div className="p-5 md:p-6 flex flex-col gap-3 flex-1" style={{ transform: "translateZ(20px)" }}>
-          <div className="inline-flex items-center gap-1.5 text-[10px] tracking-[0.3em] text-gold uppercase">
-            <Sparkles className="w-3 h-3" />
-            <span className="truncate">{useCase}</span>
-          </div>
-          <Link
-            to="/products/$productId"
-            params={{ productId: product.id }}
-            className="font-display text-base md:text-lg leading-snug line-clamp-2 hover:text-gold transition-colors"
-          >
-            {product.name}
-          </Link>
-          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3 flex-1">
-            {shortDesc(product.description)}
-          </p>
-          <div className="flex items-end justify-between pt-3 border-t border-border/60 mt-1 gap-3">
-            <div>
-              <div className="text-[10px] tracking-[0.25em] text-muted-foreground mb-1">PRICE</div>
-              <div className="font-display text-lg text-price">
-                {product.priceMaxAed
-                  ? `${formatPrice(product.priceAed)} – ${formatPrice(product.priceMaxAed)}`
-                  : formatPrice(product.priceAed)}
-              </div>
-            </div>
-            {hasVariants ? (
-              <Link
-                to="/products/$productId"
-                params={{ productId: product.id }}
-                className="text-[10px] tracking-[0.2em] font-medium border border-foreground/80 px-3 py-2.5 hover:bg-primary hover:text-primary-foreground transition-colors"
-              >
-                {t("select_options")}
-              </Link>
-            ) : (
-              <button
-                onClick={() =>
-                  add({
-                    productId: product.id,
-                    name: product.name,
-                    image: product.image,
-                    priceAed: product.priceAed,
-                  })
-                }
-                className="text-[10px] tracking-[0.2em] font-medium border border-foreground/80 px-3 py-2.5 hover:bg-primary hover:text-primary-foreground transition-colors"
-              >
-                {t("add_to_cart")}
-              </button>
-            )}
-          </div>
-        </div>
-      </article>
-    </motion.div>
-  );
-}
-
-function BrandSection({
-  brand,
-  brandSlug,
-  products,
-  index,
-}: {
-  brand: string;
-  brandSlug: string;
-  products: Product[];
-  index: number;
-}) {
-  return (
-    <motion.section
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.7, delay: 0.05 * (index % 3) }}
-      className="relative py-16 md:py-20 border-t border-border/40 first:border-t-0"
-    >
-      <div className="container-elite">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
-          <div>
-            <div className="text-[11px] tracking-[0.4em] text-gold mb-3">
-              THE COLLECTION · {String(index + 1).padStart(2, "0")}
-            </div>
-            <h2 className="font-display text-3xl md:text-5xl tracking-tight">{brand}</h2>
-            <p className="text-muted-foreground mt-2 max-w-xl">
-              {products.length} {products.length === 1 ? "product" : "products"} — the complete{" "}
-              {brand} gallery, curated for the UAE's finest salons.
-            </p>
-          </div>
-          {brandSlug && (
-            <Link
-              to="/brands/$brand"
-              params={{ brand: brandSlug }}
-              className="inline-flex items-center gap-2 text-[11px] tracking-[0.3em] text-foreground hover:text-gold transition-colors self-start md:self-end"
-            >
-              VIEW BRAND <ArrowRight className="w-4 h-4" />
-            </Link>
-          )}
-        </div>
-
-        <div className="relative [perspective:1200px]">
-          <Carousel opts={{ align: "start", loop: false, dragFree: true }} className="w-full">
-            <CarouselContent className="-ml-4">
-              {products.map((p) => (
-                <CarouselItem
-                  key={p.id}
-                  className="pl-4 basis-[78%] sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
-                >
-                  <TiltCard product={p} />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="hidden md:flex -left-4" />
-            <CarouselNext className="hidden md:flex -right-4" />
-          </Carousel>
-        </div>
-      </div>
-    </motion.section>
-  );
+  return t;
 }
 
 function ShopPage() {
   const { t } = useI18n();
   const { data: products = [], isLoading } = useProducts();
+  const navigate = Route.useNavigate();
+  const { brand: selectedSlug } = Route.useSearch();
   const [query, setQuery] = useState("");
 
+  // Group all products by brandSlug → collapses DB casing duplicates automatically
   const brandGroups = useMemo(() => {
-    const map = new Map<string, { brand: string; brandSlug: string; products: Product[] }>();
+    const map = new Map<
+      string,
+      { brand: string; brandSlug: string; products: Product[]; isFeaturedHero?: string | null }
+    >();
     for (const p of products) {
-      const brand = (p.brand && p.brand.trim()) || "Other";
+      const rawBrand = (p.brand && p.brand.trim()) || "Other";
       const brandSlug =
         (p as Product & { brandSlug?: string | null }).brandSlug ||
-        brand.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-      const key = brandSlug || brand;
-      if (!map.has(key)) map.set(key, { brand, brandSlug, products: [] });
+        rawBrand.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      const key = brandSlug || rawBrand;
+      if (!map.has(key)) {
+        map.set(key, {
+          brand: tidyBrand(rawBrand),
+          brandSlug,
+          products: [],
+        });
+      }
       map.get(key)!.products.push(p);
     }
     return Array.from(map.values()).sort((a, b) => b.products.length - a.products.length);
   }, [products]);
 
-  const filteredGroups = useMemo(() => {
-    if (!query.trim()) return brandGroups;
+  const brandTiles: BrandTileData[] = useMemo(
+    () =>
+      brandGroups.map((g) => {
+        const featured = g.products.find(
+          (p) => (p as Product & { isFeatured?: boolean }).isFeatured,
+        );
+        const heroImage = featured?.image || g.products[0]?.image || null;
+        return { brand: g.brand, brandSlug: g.brandSlug, count: g.products.length, heroImage };
+      }),
+    [brandGroups],
+  );
+
+  const filteredTiles = useMemo(() => {
+    if (!query.trim()) return brandTiles;
     const q = query.toLowerCase();
-    return brandGroups
-      .map((g) => ({
-        ...g,
-        products: g.products.filter(
-          (p) =>
-            p.name.toLowerCase().includes(q) ||
-            (p.category ?? "").toLowerCase().includes(q) ||
-            (p.brand ?? "").toLowerCase().includes(q) ||
-            deriveUseCase(p).toLowerCase().includes(q),
-        ),
-      }))
-      .filter((g) => g.products.length > 0);
-  }, [brandGroups, query]);
+    const matchingSlugs = new Set(
+      brandGroups
+        .filter(
+          (g) =>
+            g.brand.toLowerCase().includes(q) ||
+            g.brandSlug.includes(q) ||
+            g.products.some(
+              (p) =>
+                p.name.toLowerCase().includes(q) ||
+                (p.category ?? "").toLowerCase().includes(q) ||
+                deriveUseCase(p).toLowerCase().includes(q),
+            ),
+        )
+        .map((g) => g.brandSlug),
+    );
+    return brandTiles.filter((t) => matchingSlugs.has(t.brandSlug));
+  }, [brandTiles, brandGroups, query]);
+
+  const activeGroup = useMemo(
+    () => (selectedSlug ? brandGroups.find((g) => g.brandSlug === selectedSlug) : undefined),
+    [brandGroups, selectedSlug],
+  );
+
+  // Reset scroll on view change
+  useEffect(() => {
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [selectedSlug]);
+
+  function selectBrand(slug: string) {
+    navigate({ search: { brand: slug }, replace: false });
+  }
+  function clearBrand() {
+    navigate({ search: {}, replace: false });
+  }
 
   return (
     <Layout>
-      {/* HERO */}
-      <section className="relative overflow-hidden border-b border-border/40 bg-gradient-to-b from-secondary/40 to-background">
-        <div className="container-elite py-16 md:py-24 text-center relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-[11px] tracking-[0.5em] text-gold mb-4"
-          >
-            {t("shop_eyebrow")}
-          </motion.div>
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.05 }}
-            className="font-display text-4xl md:text-6xl lg:text-7xl mb-5"
-          >
-            Shop by Brand
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, delay: 0.15 }}
-            className="text-muted-foreground max-w-2xl mx-auto"
-          >
-            Every house, its own gallery. Glide through animated 3D carousels of the entire Elite
-            Professional catalogue — by brand, with use-case, price, and one-tap ordering.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.25 }}
-            className="mt-8 max-w-md mx-auto"
-          >
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search products, brands, use-cases…"
-              className="w-full px-5 py-3 bg-background border border-border focus:border-gold outline-none text-sm tracking-wide"
+      <AnimatePresence mode="wait">
+        {activeGroup ? (
+          <motion.div key={`world-${activeGroup.brandSlug}`}>
+            <BrandWorld
+              brand={activeGroup.brand}
+              products={activeGroup.products}
+              onBack={clearBrand}
             />
           </motion.div>
-        </div>
-      </section>
+        ) : (
+          <motion.div
+            key="selector"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            {/* HERO */}
+            <section className="relative overflow-hidden border-b border-border/40 bg-gradient-to-b from-secondary/40 to-background">
+              <div className="container-elite py-16 md:py-24 text-center relative z-10">
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                  className="text-[11px] tracking-[0.5em] text-gold mb-4"
+                >
+                  {t("shop_eyebrow")}
+                </motion.div>
+                <motion.h1
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7, delay: 0.05 }}
+                  className="font-display text-4xl md:text-6xl lg:text-7xl mb-5"
+                >
+                  Choose Your House
+                </motion.h1>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.7, delay: 0.15 }}
+                  className="text-muted-foreground max-w-2xl mx-auto"
+                >
+                  Every brand, its own world. Step inside any house to glide through a cinematic
+                  gallery of its complete collection — categorized by use, with prices, stories and
+                  one-tap ordering.
+                </motion.p>
 
-      {/* BRAND GALLERIES */}
-      {isLoading ? (
-        <div className="container-elite py-24 text-center text-muted-foreground">
-          Loading collections…
-        </div>
-      ) : filteredGroups.length === 0 ? (
-        <div className="container-elite py-24 text-center text-muted-foreground">
-          No products match “{query}”.
-        </div>
-      ) : (
-        filteredGroups.map((g, i) => (
-          <BrandSection
-            key={g.brandSlug || g.brand}
-            brand={g.brand}
-            brandSlug={g.brandSlug}
-            products={g.products}
-            index={i}
-          />
-        ))
-      )}
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.25 }}
+                  className="mt-8 max-w-md mx-auto"
+                >
+                  <input
+                    type="search"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search brands, products, use-cases…"
+                    className="w-full px-5 py-3 bg-background border border-border focus:border-gold outline-none text-sm tracking-wide"
+                  />
+                </motion.div>
+              </div>
+            </section>
+
+            {/* BRAND TILES */}
+            <section className="container-elite py-16 md:py-24">
+              {isLoading ? (
+                <div className="py-16 text-center text-muted-foreground">Loading collections…</div>
+              ) : filteredTiles.length === 0 ? (
+                <div className="py-16 text-center text-muted-foreground">
+                  No brands match &ldquo;{query}&rdquo;.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 [perspective:1400px]">
+                  {filteredTiles.map((tile, i) => (
+                    <BrandTile key={tile.brandSlug} data={tile} index={i} onSelect={selectBrand} />
+                  ))}
+                </div>
+              )}
+            </section>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Layout>
   );
 }
