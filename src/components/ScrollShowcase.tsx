@@ -20,14 +20,6 @@ type Panel = {
 
 const panels: Panel[] = [
   {
-    img: purple,
-    eyebrow: "THE KYO COLLECTION",
-    title: "Sculpted in",
-    italic: "shadow.",
-    body: "Italian-engineered hair care wrapped in obsidian. Pigment, shampoo, mask, and serum — a closed system tuned for color-treated hair.",
-    tint: "oklch(0.65 0.18 300)",
-  },
-  {
     img: gold,
     eyebrow: "ELITE PROFESSIONAL",
     title: "",
