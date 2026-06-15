@@ -33,8 +33,8 @@
   --color-announcement: var(--announcement);
   --color-announcement-foreground: var(--announcement-foreground);
   --color-price: var(--price);
-  --font-display: "Cormorant Garamond", Georgia, serif;
-  --font-sans: "Karla", system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", "Cormorant Fallback", Georgia, "Times New Roman", serif;
+  --font-sans: "Karla", "Karla Fallback", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 :root {
