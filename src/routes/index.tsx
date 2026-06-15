@@ -16,18 +16,24 @@ import { useProducts } from "@/lib/products-api";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Elite Professional — UAE Beauty & Salon Supply Since 2001" },
+      { title: "Elite Professional UAE — Premium Beauty & Salon Supply Since 2001" },
       {
         name: "description",
         content:
-          "Welcome to Elite Professional. Premium hair care, color, electronics & salon tools delivered free across the UAE.",
+          "Shop premium hair care, hair color, salon electronics, fragrances and professional tools from Elite Professional UAE. Free delivery across the Emirates, money-back guarantee.",
       },
-      { property: "og:title", content: "Elite Professional — UAE Beauty Supply" },
+      { name: "keywords", content: "salon supplies UAE, professional hair color, KYO, Freelimix, 3ME Maestri, hair dryer Dubai, beauty supplies" },
+      { property: "og:title", content: "Elite Professional UAE — Premium Beauty & Salon Supply" },
       {
         property: "og:description",
-        content: "Welcome to our store! Premium professional beauty supplies since 2001.",
+        content: "Premium professional beauty supplies since 2001. Hair care, color, electronics, tools — delivered free across the UAE.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://eliteprofessional.lovable.app/" },
+      { name: "twitter:title", content: "Elite Professional UAE — Premium Beauty & Salon Supply" },
+      { name: "twitter:description", content: "Premium professional beauty supplies since 2001. Free UAE delivery." },
     ],
+    links: [{ rel: "canonical", href: "https://eliteprofessional.lovable.app/" }],
   }),
   component: Index,
 });
