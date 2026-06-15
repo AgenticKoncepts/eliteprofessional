@@ -99,13 +99,15 @@
 
   h1, h2, h3, h4, h5 {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
+    font-weight: 400;
   }
 
   [dir="rtl"] {
     font-family: "Cairo", "Noto Sans Arabic", system-ui, sans-serif;
   }
 }
+
 
 @layer utilities {
   .container-elite {
