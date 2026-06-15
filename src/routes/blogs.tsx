@@ -10,17 +10,21 @@ import hero3 from "@/assets/cat-hairdryer.jpg";
 export const Route = createFileRoute("/blogs")({
   head: () => ({
     meta: [
-      { title: "Journal — Elite Professional UAE" },
+      { title: "Journal — Salon Tips & Product Stories | Elite Professional UAE" },
       {
         name: "description",
-        content: "Salon tips, product spotlights and beauty news from Elite Professional.",
+        content:
+          "Editorial guides on permanent hair color, marine collagen treatments and salon equipment care — written by Elite Professional UAE specialists.",
       },
-      { property: "og:title", content: "Elite Professional Journal" },
+      { property: "og:title", content: "Elite Professional Journal — Salon Tips & Product Stories" },
       {
         property: "og:description",
-        content: "Salon tips, product spotlights and beauty news.",
+        content: "Editorial guides on hair color, treatments and salon equipment care from Elite Professional UAE.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://eliteprofessional.lovable.app/blogs" },
     ],
+    links: [{ rel: "canonical", href: "https://eliteprofessional.lovable.app/blogs" }],
   }),
   component: BlogsPage,
 });
