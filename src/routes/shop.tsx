@@ -15,18 +15,23 @@ export const Route = createFileRoute("/shop")({
   }),
   head: () => ({
     meta: [
-      { title: "Shop by Brand — Elite Professional UAE" },
+      { title: "Shop by Brand — Elite Professional UAE | KYO, Freelimix, 3ME Maestri" },
       {
         name: "description",
         content:
-          "Explore every Elite Professional house in its own animated 3D gallery — KYO, Freelimix, 3ME Maestri, Arcocere and more. Free UAE delivery.",
+          "Browse every Elite Professional house in an immersive 3D gallery — KYO, Freelimix, 3ME Maestri, Arcocere, Dr.Kraut and more. Free UAE delivery, money-back guarantee.",
       },
       { property: "og:title", content: "Shop by Brand — Elite Professional UAE" },
       {
         property: "og:description",
         content: "An immersive, brand-by-brand gallery of professional beauty and salon products.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://eliteprofessional.lovable.app/shop" },
+      { name: "twitter:title", content: "Shop by Brand — Elite Professional UAE" },
+      { name: "twitter:description", content: "Immersive brand-by-brand gallery of pro salon products." },
     ],
+    links: [{ rel: "canonical", href: "https://eliteprofessional.lovable.app/shop" }],
   }),
   component: ShopPage,
 });

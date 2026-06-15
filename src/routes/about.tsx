@@ -6,18 +6,21 @@ import { useI18n } from "@/lib/i18n";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Us — Elite Professional UAE" },
+      { title: "About Elite Professional UAE — Salon Supply Since 2001" },
       {
         name: "description",
         content:
-          "Self-established since 2001, Elite Professional develops new ideas, concepts and technologies for the salon industry.",
+          "Established in 2001, Elite Professional distributes premium salon supplies across the UAE — 23+ years serving 5,000+ professionals with 10+ leading global brands.",
       },
-      { property: "og:title", content: "About Elite Professional — Since 2001" },
+      { property: "og:title", content: "About Elite Professional UAE — Salon Supply Since 2001" },
       {
         property: "og:description",
-        content: "Self-established since 2001, serving salons across the UAE.",
+        content: "23+ years, 5,000+ loyal customers, 10+ premium brands — the Elite Professional story.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://eliteprofessional.lovable.app/about" },
     ],
+    links: [{ rel: "canonical", href: "https://eliteprofessional.lovable.app/about" }],
   }),
   component: AboutPage,
 });
