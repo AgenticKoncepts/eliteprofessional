@@ -24,8 +24,8 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 bg-background border-b border-white/5">
       <div className="max-w-[1600px] mx-auto px-4 md:px-8">
-        <div className="grid grid-cols-[auto_1fr_auto] items-center h-20 md:h-24 gap-4">
-          {/* Left: primary nav */}
+        <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center h-16 md:h-24 gap-2 sm:gap-4">
+          {/* Left: primary nav (desktop) */}
           <nav className="hidden lg:flex items-center gap-8 text-[11px] uppercase tracking-[0.2em] font-medium">
             {navItems.slice(0, 3).map((n) => (
               <Link
@@ -42,40 +42,43 @@ export function Header() {
 
           {/* Mobile menu trigger (left) */}
           <button
-            className="lg:hidden -ml-1 p-2 hover:text-gold transition-colors"
+            className="lg:hidden -ms-1 p-2 shrink-0 hover:text-gold transition-colors"
             aria-label={t("menu")}
+            aria-expanded={mobileOpen}
             onClick={() => setMobileOpen((v) => !v)}
           >
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
 
           {/* Center: wordmark */}
-          <Link to="/" aria-label="Elite Professional" className="flex flex-col items-center justify-center">
-            <span className="font-display text-3xl md:text-4xl font-light tracking-[0.18em] uppercase leading-none">
+          <Link to="/" aria-label="Elite Professional" className="flex flex-col items-center justify-center min-w-0 px-2">
+            <span className="font-display text-2xl sm:text-3xl md:text-4xl font-light tracking-[0.18em] uppercase leading-none truncate">
               Elite
             </span>
-            <span className="mt-1 text-[9px] tracking-[0.5em] uppercase text-gold">
+            <span className="mt-1 text-[8px] sm:text-[9px] tracking-[0.4em] sm:tracking-[0.5em] uppercase text-gold truncate max-w-full">
               {lang === "ar" ? "بروفيشنال" : "Professional UAE"}
             </span>
           </Link>
 
           {/* Right: utilities */}
-          <div className="flex items-center gap-4 md:gap-6 justify-end">
-            <div className="hidden md:flex items-center gap-4 border-r border-white/10 pr-6">
+          <div className="flex items-center gap-3 sm:gap-4 md:gap-6 justify-end shrink-0">
+            <div className="hidden md:flex items-center gap-4 border-e border-white/10 pe-6">
               <div className="relative">
                 <button
                   onClick={() => setCurrencyOpen((v) => !v)}
                   className="text-[11px] uppercase tracking-[0.2em] flex items-center gap-1 hover:text-gold transition-colors"
+                  aria-label={`Currency: ${currency}`}
+                  aria-expanded={currencyOpen}
                 >
                   {currency} <ChevronDown className="w-3 h-3" />
                 </button>
                 {currencyOpen && (
-                  <div className="absolute right-0 top-full mt-2 bg-card border border-white/10 shadow-lg py-1 min-w-[80px] z-50">
+                  <div className="absolute end-0 top-full mt-2 bg-card border border-white/10 shadow-lg py-1 min-w-[80px] z-50">
                     {CURRENCIES.map((c) => (
                       <button
                         key={c}
                         onClick={() => { setCurrency(c); setCurrencyOpen(false); }}
-                        className={`block w-full text-left px-3 py-1.5 text-xs hover:bg-white/5 ${
+                        className={`block w-full text-start px-3 py-1.5 text-xs hover:bg-white/5 ${
                           c === currency ? "text-gold" : ""
                         }`}
                       >
@@ -88,6 +91,7 @@ export function Header() {
               <button
                 onClick={() => setLang(lang === "en" ? "ar" : "en")}
                 className="text-[11px] uppercase tracking-[0.2em] hover:text-gold transition-colors"
+                aria-label={lang === "en" ? "Switch to Arabic" : "Switch to English"}
               >
                 {lang === "en" ? "العربية" : "EN"}
               </button>
@@ -104,13 +108,13 @@ export function Header() {
                 {t("contact")}
               </Link>
             </div>
-            <button aria-label={t("search")} className="hover:text-gold transition-colors">
+            <button aria-label={t("search")} className="hover:text-gold transition-colors hidden sm:inline-flex">
               <Search className="w-5 h-5" strokeWidth={1.25} />
             </button>
             <button aria-label={t("wishlist")} className="hover:text-gold transition-colors relative">
               <Heart className="w-5 h-5" strokeWidth={1.25} />
               {ids.size > 0 && (
-                <span className="absolute -top-2 -right-2 bg-gold text-gold-foreground text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                <span className="absolute -top-2 -end-2 bg-gold text-gold-foreground text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
                   {ids.size}
                 </span>
               )}
@@ -118,7 +122,7 @@ export function Header() {
             <button aria-label={t("cart")} onClick={openCart} className="hover:text-gold transition-colors relative">
               <ShoppingBag className="w-5 h-5" strokeWidth={1.25} />
               {count > 0 && (
-                <span className="absolute -top-2 -right-2 bg-gold text-gold-foreground text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                <span className="absolute -top-2 -end-2 bg-gold text-gold-foreground text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
                   {count}
                 </span>
               )}
