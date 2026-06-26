@@ -88,12 +88,13 @@ export function HeroVideo() {
         </div>
 
         <h1 className="font-display text-5xl md:text-7xl lg:text-[8.5rem] leading-[0.95] tracking-tight overflow-hidden">
-          <span className="block">
-            <span className="hv-word inline-block mr-4"></span>
+          <span className="sr-only">Elite Professional UAE — Premium Beauty & Salon Supply Since 2001</span>
+          <span aria-hidden="true" className="block">
+            <span className="hv-word inline-block mr-4">Performance.</span>
           </span>
-          <span className="block">
+          <span aria-hidden="true" className="block">
             <span className="hv-word inline-block mr-4 italic text-[oklch(0.78_0.13_85)]">
-              {"\u200B"}
+              Refined.
             </span>
           </span>
         </h1>

@@ -15,7 +15,7 @@ import { useI18n } from "@/lib/i18n";
 import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
 
-const SITE_URL = "https://eliteprofessionaluae.lovable.app";
+const SITE_URL = "https://eliteprofessional.lovable.app";
 
 export const Route = createFileRoute("/brands/$brand")({
   head: ({ params }) => {

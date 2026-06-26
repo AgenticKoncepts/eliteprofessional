@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-const BASE_URL = "https://eliteprofessionaluae.lovable.app";
+const BASE_URL = "https://eliteprofessional.lovable.app";
 
 interface SitemapEntry {
   path: string;
