@@ -12,11 +12,11 @@ import s4 from "@/assets/hero-skincare.jpg";
 import s5 from "@/assets/hero-tools.jpg";
 
 const slides = [
-  { image: s1, key: "haircare", alt: "Professional hair care products — shampoos, conditioners and treatments" },
-  { image: s2, key: "haircolor", alt: "Permanent hair color and salon coloring systems" },
-  { image: s3, key: "electronics", alt: "Salon electronics — professional hair dryers, clippers and styling tools" },
-  { image: s4, key: "skincare", alt: "Professional skincare and body care products" },
-  { image: s5, key: "tools", alt: "Salon tools and accessories — brushes, scissors and styling instruments" },
+  { image: s1, key: "haircare", alt: "Professional hair care products — shampoos, conditioners and treatments for salon use" },
+  { image: s2, key: "haircolor", alt: "Permanent hair color and salon coloring systems for professional stylists" },
+  { image: s3, key: "electronics", alt: "Professional salon electronics — hair dryers, clippers and styling tools for UAE barbers and stylists" },
+  { image: s4, key: "skincare", alt: "Professional skincare and body care products for spas and beauty clinics" },
+  { image: s5, key: "tools", alt: "Salon tools and accessories — brushes, scissors and styling instruments for professional use" },
 ];
 
 export function HeroSlider() {
