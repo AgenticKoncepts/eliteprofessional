@@ -15,6 +15,7 @@ interface BrandWorldProps {
   brand: string;
   products: Product[];
   onBack: () => void;
+  coverImage?: string;
 }
 
 interface TypeGroup {
