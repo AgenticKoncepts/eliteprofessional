@@ -1,22 +1,28 @@
 import { Mail, Phone, Instagram } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
+import eliteLogo from "@/assets/elite-logo.png.asset.json";
 
 export function Footer() {
   const { t, lang } = useI18n();
   return (
     <footer className="bg-background text-foreground mt-24 border-t border-gold/20">
-      {/* Hairline gold divider with center wordmark */}
+      {/* Hairline gold divider with center logo */}
       <div className="container-elite pt-16 pb-10">
         <div className="flex flex-col items-center text-center mb-12">
-          <span className="font-display text-4xl md:text-5xl font-light tracking-[0.18em] uppercase leading-none">
-            Elite
-          </span>
-          <span className="mt-2 text-[10px] tracking-[0.5em] uppercase text-gold">
-            {lang === "ar" ? "بروفيشنال — الإمارات" : "Professional — UAE"}
+          <img
+            src={eliteLogo.url}
+            alt="Elite Professional"
+            className="h-14 md:h-16 w-auto select-none"
+            style={{ filter: "invert(1) brightness(1.05)" }}
+            draggable={false}
+          />
+          <span className="mt-3 text-[10px] tracking-[0.5em] uppercase text-gold">
+            {lang === "ar" ? "الإمارات" : "UAE"}
           </span>
           <div className="mt-6 h-px w-24 bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
         </div>
+
 
         <div className="grid gap-12 md:grid-cols-4">
           {/* About + contact */}
