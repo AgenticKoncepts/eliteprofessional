@@ -5,6 +5,7 @@ import { useI18n, CURRENCIES } from "@/lib/i18n";
 import { useWishlist } from "@/lib/wishlist";
 import { useCart } from "@/lib/cart";
 import { CATEGORIES } from "@/data/products";
+import eliteLogo from "@/assets/elite-logo.png.asset.json";
 
 export function Header() {
   const { lang, setLang, currency, setCurrency, t } = useI18n();
