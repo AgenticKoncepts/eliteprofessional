@@ -50,14 +50,15 @@ export function Header() {
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
 
-          {/* Center: wordmark */}
-          <Link to="/" aria-label="Elite Professional" className="flex flex-col items-center justify-center min-w-0 px-2">
-            <span className="font-display text-2xl sm:text-3xl md:text-4xl font-light tracking-[0.18em] uppercase leading-none truncate">
-              Elite
-            </span>
-            <span className="mt-1 text-[8px] sm:text-[9px] tracking-[0.4em] sm:tracking-[0.5em] uppercase text-gold truncate max-w-full">
-              {lang === "ar" ? "بروفيشنال" : "Professional UAE"}
-            </span>
+          {/* Center: logo */}
+          <Link to="/" aria-label="Elite Professional" className="flex items-center justify-center min-w-0 px-2">
+            <img
+              src={eliteLogo.url}
+              alt="Elite Professional"
+              className="h-9 sm:h-10 md:h-12 w-auto select-none"
+              style={{ filter: "invert(1) brightness(1.05)" }}
+              draggable={false}
+            />
           </Link>
 
           {/* Right: utilities */}
