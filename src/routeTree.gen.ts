@@ -22,6 +22,7 @@ import { Route as BrandsIndexRouteImport } from './routes/brands.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ProductsProductIdRouteImport } from './routes/products.$productId'
 import { Route as BrandsBrandRouteImport } from './routes/brands.$brand'
+import { Route as BlogsSlugRouteImport } from './routes/blogs.$slug'
 import { Route as AdminOpsRouteImport } from './routes/admin.ops'
 import { Route as AdminNewRouteImport } from './routes/admin.new'
 import { Route as AdminSlugRouteImport } from './routes/admin.$slug'
@@ -91,6 +92,11 @@ const BrandsBrandRoute = BrandsBrandRouteImport.update({
   path: '/$brand',
   getParentRoute: () => BrandsRoute,
 } as any)
+const BlogsSlugRoute = BlogsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => BlogsRoute,
+} as any)
 const AdminOpsRoute = AdminOpsRouteImport.update({
   id: '/ops',
   path: '/ops',
@@ -111,7 +117,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
-  '/blogs': typeof BlogsRoute
+  '/blogs': typeof BlogsRouteWithChildren
   '/brands': typeof BrandsRouteWithChildren
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/new': typeof AdminNewRoute
   '/admin/ops': typeof AdminOpsRoute
+  '/blogs/$slug': typeof BlogsSlugRoute
   '/brands/$brand': typeof BrandsBrandRoute
   '/products/$productId': typeof ProductsProductIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -128,7 +135,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/blogs': typeof BlogsRoute
+  '/blogs': typeof BlogsRouteWithChildren
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
   '/shop': typeof ShopRoute
@@ -136,6 +143,7 @@ export interface FileRoutesByTo {
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/new': typeof AdminNewRoute
   '/admin/ops': typeof AdminOpsRoute
+  '/blogs/$slug': typeof BlogsSlugRoute
   '/brands/$brand': typeof BrandsBrandRoute
   '/products/$productId': typeof ProductsProductIdRoute
   '/admin': typeof AdminIndexRoute
@@ -146,7 +154,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
-  '/blogs': typeof BlogsRoute
+  '/blogs': typeof BlogsRouteWithChildren
   '/brands': typeof BrandsRouteWithChildren
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
@@ -155,6 +163,7 @@ export interface FileRoutesById {
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/new': typeof AdminNewRoute
   '/admin/ops': typeof AdminOpsRoute
+  '/blogs/$slug': typeof BlogsSlugRoute
   '/brands/$brand': typeof BrandsBrandRoute
   '/products/$productId': typeof ProductsProductIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -175,6 +184,7 @@ export interface FileRouteTypes {
     | '/admin/$slug'
     | '/admin/new'
     | '/admin/ops'
+    | '/blogs/$slug'
     | '/brands/$brand'
     | '/products/$productId'
     | '/admin/'
@@ -191,6 +201,7 @@ export interface FileRouteTypes {
     | '/admin/$slug'
     | '/admin/new'
     | '/admin/ops'
+    | '/blogs/$slug'
     | '/brands/$brand'
     | '/products/$productId'
     | '/admin'
@@ -209,6 +220,7 @@ export interface FileRouteTypes {
     | '/admin/$slug'
     | '/admin/new'
     | '/admin/ops'
+    | '/blogs/$slug'
     | '/brands/$brand'
     | '/products/$productId'
     | '/admin/'
@@ -219,7 +231,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRouteWithChildren
-  BlogsRoute: typeof BlogsRoute
+  BlogsRoute: typeof BlogsRouteWithChildren
   BrandsRoute: typeof BrandsRouteWithChildren
   ContactRoute: typeof ContactRoute
   LoginRoute: typeof LoginRoute
@@ -321,6 +333,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BrandsBrandRouteImport
       parentRoute: typeof BrandsRoute
     }
+    '/blogs/$slug': {
+      id: '/blogs/$slug'
+      path: '/$slug'
+      fullPath: '/blogs/$slug'
+      preLoaderRoute: typeof BlogsSlugRouteImport
+      parentRoute: typeof BlogsRoute
+    }
     '/admin/ops': {
       id: '/admin/ops'
       path: '/ops'
@@ -361,6 +380,16 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface BlogsRouteChildren {
+  BlogsSlugRoute: typeof BlogsSlugRoute
+}
+
+const BlogsRouteChildren: BlogsRouteChildren = {
+  BlogsSlugRoute: BlogsSlugRoute,
+}
+
+const BlogsRouteWithChildren = BlogsRoute._addFileChildren(BlogsRouteChildren)
+
 interface BrandsRouteChildren {
   BrandsBrandRoute: typeof BrandsBrandRoute
   BrandsIndexRoute: typeof BrandsIndexRoute
@@ -378,7 +407,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRouteWithChildren,
-  BlogsRoute: BlogsRoute,
+  BlogsRoute: BlogsRouteWithChildren,
   BrandsRoute: BrandsRouteWithChildren,
   ContactRoute: ContactRoute,
   LoginRoute: LoginRoute,

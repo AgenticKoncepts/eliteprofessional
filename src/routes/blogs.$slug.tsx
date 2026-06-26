@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Layout } from "@/components/Layout";
 import { motion } from "framer-motion";
 import { Calendar, ArrowLeft, ArrowUpRight } from "lucide-react";
-import { BLOG_POSTS, getPostBySlug } from "@/data/blog-posts";
+import { BLOG_POSTS, getPostBySlug, type BlogPost } from "@/data/blog-posts";
 
 export const Route = createFileRoute("/blogs/$slug")({
   loader: ({ params }) => {
@@ -53,7 +53,7 @@ export const Route = createFileRoute("/blogs/$slug")({
 });
 
 function BlogPostPage() {
-  const { post } = Route.useLoaderData();
+  const { post } = Route.useLoaderData() as { post: BlogPost };
   const related = BLOG_POSTS.filter((p) => p.slug !== post.slug).slice(0, 3);
 
   return (
