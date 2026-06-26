@@ -56,63 +56,16 @@ export function ScrollShowcase() {
         </div>
       </div>
 
-      {panels.map((p, i) => (
-        <section
-          key={i}
-          className="ss-panel relative min-h-[110vh] overflow-hidden"
-        >
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="ss-overlay absolute inset-0">
-              <img
-                src={p.img}
-                alt={p.title}
-                className="ss-img absolute inset-0 h-[124%] w-full object-cover"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/50 to-black/40" />
-            </div>
+      {/* Product scroll-parallax placeholder — user will replace this section */}
+      <section className="relative min-h-[80vh] overflow-hidden bg-gradient-to-b from-black to-secondary" aria-label="Product showcase coming soon">
+        <div className="container-elite flex h-full min-h-[80vh] items-center justify-center">
+          <div className="text-center">
+            <div className="mb-4 text-[10px] tracking-[0.5em] text-[oklch(0.78_0.13_85)]">COMING SOON</div>
+            <h2 className="font-display text-3xl md:text-5xl text-white/80">Product Scroll Parallax</h2>
           </div>
+        </div>
+      </section>
 
-          <div className="container-elite relative z-10 flex min-h-[110vh] items-center">
-            <div className={`max-w-2xl ${i % 2 ? "md:ml-auto md:text-right" : ""}`}>
-              <div
-                className="ss-meta mb-6 text-[10px] tracking-[0.5em]"
-                style={{ color: p.tint }}
-              >
-                {p.eyebrow}
-              </div>
-
-              <h2 className="font-display text-5xl md:text-7xl lg:text-8xl leading-[0.95]">
-                <span className="block overflow-hidden">
-                  <span className="ss-word inline-block">{p.title}</span>
-                </span>
-                <span className="block overflow-hidden">
-                  <span
-                    className="ss-word inline-block italic"
-                    style={{ color: p.tint }}
-                  >
-                    {p.italic}
-                  </span>
-                </span>
-              </h2>
-
-              <p className="ss-meta mt-7 max-w-lg text-base md:text-lg text-white/75 leading-relaxed">
-                {p.body}
-              </p>
-
-              <div className="ss-meta mt-9">
-                <Link
-                  to="/shop"
-                  className="group inline-flex items-center gap-3 border-b border-white/40 pb-2 text-[11px] tracking-[0.3em] hover:border-[oklch(0.78_0.13_85)]"
-                >
-                  EXPLORE THE EDIT
-                  <span className="transition-transform group-hover:translate-x-1">→</span>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-      ))}
     </div>
   );
 }
