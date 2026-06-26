@@ -18,17 +18,17 @@ export const Route = createFileRoute("/blogs")({
     };
     return {
       meta: [
-        { title: "The Journal — Brand Stories | Elite Professional UAE" },
+        { title: "Journal — Elite Professional UAE" },
         {
           name: "description",
           content:
-            "The founder's journey since 2001 and the Italian heritage houses behind Elite Professional UAE — Logevy, 3ME Maestri, FreeLimix, KYO.",
+            "Brand stories and Italian heritage houses behind Elite Professional UAE — Logevy, 3ME Maestri, FreeLimix, KYO.",
         },
-        { property: "og:title", content: "Elite Professional Journal — Brand Stories" },
+        { property: "og:title", content: "Journal — Elite Professional UAE" },
         {
           property: "og:description",
           content:
-            "The founder's journey since 2001 and the Italian heritage houses behind Elite Professional UAE.",
+            "Brand stories and Italian heritage houses behind Elite Professional UAE.",
         },
         { property: "og:type", content: "website" },
         { property: "og:url", content: "https://eliteprofessional.lovable.app/blogs" },
