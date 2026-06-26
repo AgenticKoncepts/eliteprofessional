@@ -144,6 +144,7 @@ function ShopPage() {
             <BrandWorld
               brand={activeGroup.brand}
               products={activeGroup.products}
+              coverImage={getBrandCover(activeGroup.brandSlug) ?? undefined}
               onBack={clearBrand}
             />
           </motion.div>
