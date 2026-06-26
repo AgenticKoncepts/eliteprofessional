@@ -5,25 +5,43 @@ import { Calendar, ArrowUpRight } from "lucide-react";
 import { BLOG_POSTS } from "@/data/blog-posts";
 
 export const Route = createFileRoute("/blogs")({
-  head: () => ({
-    meta: [
-      { title: "The Journal — Brand Histories & House Stories | Elite Professional UAE" },
-      {
-        name: "description",
-        content:
-          "Inside Elite Professional UAE — the 25-year founder's journey and the heritage houses we curate: Logevy Firenze 1965, 3ME Maestri, FreeLimix and KYO.",
-      },
-      { property: "og:title", content: "Elite Professional Journal — Brand Histories & House Stories" },
-      {
-        property: "og:description",
-        content:
-          "The founder's journey since 2001 and the Italian heritage houses behind Elite Professional UAE.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://eliteprofessional.lovable.app/blogs" },
-    ],
-    links: [{ rel: "canonical", href: "https://eliteprofessional.lovable.app/blogs" }],
-  }),
+  head: () => {
+    const itemList = {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      itemListElement: BLOG_POSTS.map((p, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: `https://eliteprofessional.lovable.app/blogs/${p.slug}`,
+        name: p.title,
+      })),
+    };
+    return {
+      meta: [
+        { title: "The Journal — Brand Stories | Elite Professional UAE" },
+        {
+          name: "description",
+          content:
+            "The founder's journey since 2001 and the Italian heritage houses behind Elite Professional UAE — Logevy, 3ME Maestri, FreeLimix, KYO.",
+        },
+        { property: "og:title", content: "Elite Professional Journal — Brand Stories" },
+        {
+          property: "og:description",
+          content:
+            "The founder's journey since 2001 and the Italian heritage houses behind Elite Professional UAE.",
+        },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: "https://eliteprofessional.lovable.app/blogs" },
+        { property: "og:image", content: BLOG_POSTS[0].image },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:image", content: BLOG_POSTS[0].image },
+      ],
+      links: [{ rel: "canonical", href: "https://eliteprofessional.lovable.app/blogs" }],
+      scripts: [
+        { type: "application/ld+json", children: JSON.stringify(itemList) },
+      ],
+    };
+  },
   component: BlogsPage,
 });
 

@@ -5,24 +5,40 @@ import { useState } from "react";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title: "Contact Elite Professional UAE — Phone, Email & Showroom" },
-      {
-        name: "description",
-        content:
-          "Get in touch with Elite Professional UAE. Call +971 50 884 4641, email info@eliteprofessionaluae.com, or message us on Instagram. Free delivery across the Emirates.",
-      },
-      { property: "og:title", content: "Contact Elite Professional UAE" },
-      {
-        property: "og:description",
-        content: "Phone, email and Instagram — reach our UAE salon-supply team.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://eliteprofessional.lovable.app/contact" },
-    ],
-    links: [{ rel: "canonical", href: "https://eliteprofessional.lovable.app/contact" }],
-  }),
+  head: () => {
+    const localBusiness = {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      name: "Elite Professional UAE",
+      url: "https://eliteprofessional.lovable.app/contact",
+      telephone: "+971508844641",
+      email: "info@eliteprofessionaluae.com",
+      areaServed: { "@type": "Country", name: "United Arab Emirates" },
+      address: { "@type": "PostalAddress", addressCountry: "AE" },
+      sameAs: ["https://www.instagram.com/elite_professional/"],
+    };
+    return {
+      meta: [
+        { title: "Contact Elite Professional UAE — Phone, Email & Showroom" },
+        {
+          name: "description",
+          content:
+            "Get in touch with Elite Professional UAE. Call +971 50 884 4641, email info@eliteprofessionaluae.com, or message us on Instagram.",
+        },
+        { property: "og:title", content: "Contact Elite Professional UAE" },
+        {
+          property: "og:description",
+          content: "Phone, email and Instagram — reach our UAE salon-supply team.",
+        },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: "https://eliteprofessional.lovable.app/contact" },
+      ],
+      links: [{ rel: "canonical", href: "https://eliteprofessional.lovable.app/contact" }],
+      scripts: [
+        { type: "application/ld+json", children: JSON.stringify(localBusiness) },
+      ],
+    };
+  },
   component: ContactPage,
 });
 
