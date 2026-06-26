@@ -56,16 +56,6 @@ export function ScrollShowcase() {
         </div>
       </div>
 
-      {/* Product scroll-parallax placeholder — user will replace this section */}
-      <section className="relative min-h-[80vh] overflow-hidden bg-gradient-to-b from-black to-secondary" aria-label="Product showcase coming soon">
-        <div className="container-elite flex h-full min-h-[80vh] items-center justify-center">
-          <div className="text-center">
-            <div className="mb-4 text-[10px] tracking-[0.5em] text-[oklch(0.78_0.13_85)]">COMING SOON</div>
-            <h2 className="font-display text-3xl md:text-5xl text-white/80">Product Scroll Parallax</h2>
-          </div>
-        </div>
-      </section>
-
     </div>
   );
 }
