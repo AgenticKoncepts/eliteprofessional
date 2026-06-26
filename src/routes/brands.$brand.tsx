@@ -106,12 +106,12 @@ function BrandPage() {
       const img = p.image;
       if (img && !seen.has(img)) {
         seen.add(img);
-        pool.push({ src: img, alt: p.name });
+        pool.push({ src: img, alt: `${p.name} — ${brandName} professional product at Elite Professional UAE` });
       }
       if (pool.length >= 7) break;
     }
     return pool;
-  }, [products]);
+  }, [products, brandName]);
 
   if (isLoading) {
     return (
