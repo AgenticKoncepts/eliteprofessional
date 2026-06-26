@@ -15,23 +15,23 @@ export const Route = createFileRoute("/shop")({
   }),
   head: () => ({
     meta: [
-      { title: "Shop by Brand — Elite Professional UAE" },
+      { title: "Shop — Elite Professional UAE" },
       {
         name: "description",
         content:
-          "Browse every Elite Professional house — KYO, Freelimix, 3ME Maestri, Arcocere and more. Free UAE delivery.",
+          "Browse every brand — KYO, Freelimix, Arcocere and more. Free UAE delivery.",
       },
-      { property: "og:title", content: "Shop by Brand — Elite Professional UAE" },
+      { property: "og:title", content: "Shop — Elite Professional UAE" },
       {
         property: "og:description",
-        content: "An immersive, brand-by-brand gallery of professional beauty and salon products.",
+        content: "Browse every brand — KYO, Freelimix, Arcocere and more. Free UAE delivery.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://eliteprofessional.lovable.app/shop" },
       { property: "og:image", content: "https://eliteprofessional.lovable.app/og-shop.jpg" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Shop by Brand — Elite Professional UAE" },
-      { name: "twitter:description", content: "Immersive brand-by-brand gallery of pro salon products." },
+      { name: "twitter:title", content: "Shop — Elite Professional UAE" },
+      { name: "twitter:description", content: "Browse every brand — KYO, Freelimix, Arcocere and more. Free UAE delivery." },
       { name: "twitter:image", content: "https://eliteprofessional.lovable.app/og-shop.jpg" },
     ],
     links: [{ rel: "canonical", href: "https://eliteprofessional.lovable.app/shop" }],
