@@ -1,70 +1,92 @@
 
-# Premium Brand-First Gallery — /shop
+# Plan — Make Elite Professional UAE a Complete Store
 
-## Chosen flow (picking the most visually satisfying option)
+Goal: take the site from "beautiful catalog with a draft checkout" to a real, launch-ready bilingual e-commerce experience.
 
-**Full-takeover on `/shop`** — a single immersive page, no route change.
+## 1. Payments — Card + Cash on Delivery
+- Enable Lovable's built-in **Stripe Payments** (card, Apple Pay, Google Pay; AED supported via UAE pricing).
+- Add a **payment method step** in the cart drawer:
+  - **Pay by card** → Stripe Checkout session, success/cancel routes.
+  - **Cash on Delivery (COD)** → existing `placeOrder` flow, order saved as `pending_cod`.
+- Stripe webhook (`/api/public/webhooks/stripe`) marks orders `paid`, decrements stock, sends confirmation email.
+- Order schema gains: `payment_method`, `payment_status`, `stripe_session_id`, `paid_at`.
 
-1. Landing state: cinematic hero + a grid of 3D brand cards ("the houses").
-2. Click a brand → the grid morphs/scrolls away and that brand's **world** takes over the viewport: brand hero + parallax background built from that brand's hero image + stacked product-type sections.
-3. A persistent "← All brands" pill returns to the selector. URL syncs via a `?brand=kyo` query param so the state is shareable, back-button friendly, and SEO-safe — without creating a new route.
-4. The existing `/brands/$brand` route stays untouched (deep-link/SEO fallback).
+## 2. Customer Accounts (guest checkout still works)
+- Add public `/account` area gated by `_authenticated/` (Google + email/password + password reset).
+- Pages: **Orders**, **Order detail / tracking**, **Addresses**, **Wishlist**, **Profile**.
+- New tables: `profiles`, `customer_addresses`, `wishlists` (synced from the current local wishlist on first login).
+- Link `orders.user_id` (nullable for guests). Guests can still check out; an order-lookup page (`/track?email=&order=`) lets them view status without an account.
+- Configure Google sign-in via `supabase--configure_social_auth`.
 
-Why this and not the others: inline-expand crowds the page on mobile and weakens each brand's identity; routing to `/brands/$brand` loses the cinematic transition. Takeover gives each brand its own "world" (the brief's exact language) while keeping one URL and zero new routes.
+## 3. Inventory & Stock
+- Webhook decrements `stock` atomically when payment succeeds (or when COD order is placed).
+- Product card / detail show **Low stock** and **Out of stock** badges.
+- Admin gets a low-stock dashboard widget.
 
-## Files
+## 4. Transactional Emails (Lovable Emails)
+- Scaffold branded React Email templates in Editorial Noir styling:
+  - Order confirmation (EN + AR variants)
+  - Payment receipt
+  - Shipped / status update
+  - Password reset, email verification, magic link
+- Order confirmation includes line items, AED totals, shipping address, support contact.
 
-**Edit**
-- `src/routes/shop.tsx` — rewrite as a brand-first selector + takeover view. Reuses `TiltCard` (already in this file) and keeps current SEO `head()`.
+## 5. Real Category Browsing + Filters
+- New route `/category/$slug` (Hair Care, Hair Color, Fragrance, Skincare, Tools & Electronics, Shower Vitamin Heads, Professional / Salon).
+- Filters: brand, price range, in-stock, use-case; sort by featured / price / newest.
+- Header sub-rail and footer link straight to these category pages.
+- All routes have unique SEO + breadcrumb JSON-LD.
 
-**New**
-- `src/components/BrandTile.tsx` — the 3D brand card (tilt, depth, gold accents, hero-image backdrop, count, keyboard-focusable, mobile tap-friendly).
-- `src/components/BrandWorld.tsx` — the takeover panel: brand hero with parallax backdrop, "← All brands" pill, and stacked product-type sections (each with its own `framer-motion` reveal + horizontal `embla` carousel of `TiltCard`s).
+## 6. Product Reviews & Ratings
+- New `reviews` table (rating 1-5, title, body, verified_purchase flag, status).
+- Customers who purchased a product can leave a review from `/account/orders`.
+- Product page shows average rating, distribution, sorted reviews, and emits `AggregateRating` schema.
+- Admin moderation tab.
 
-**Untouched** (guardrails): Header, Footer, Cart, Wishlist, `/products/$productId`, `/brands/$brand`, `Layout`, i18n, styling tokens, all other routes, all data hooks. No DB changes.
+## 7. Wishlist & Cart Sync
+- When a logged-in user adds to wishlist or cart, persist to Supabase (`wishlists`, `carts`) and rehydrate across devices.
+- Guests keep using `localStorage`; merge on login.
 
-## Data — already in place
+## 8. Blog CMS
+- New `blog_posts` table (title/title_ar, slug, cover, excerpt, body MDX-ish, author, published_at, tags).
+- Routes: `/blogs` index (already exists; wire to DB), `/blogs/$slug` detail with OG image, article schema, related posts.
+- Admin: create/edit/publish posts (bilingual).
 
-`useProducts()` returns products with `brand`, `brandSlug`, `productType`, `productSubtype`, `category`, image, price, description. Grouping is pure derivation:
+## 9. Shipping & Delivery Rules
+- Configurable shipping zones (UAE Emirates) with thresholds: free over AED 200, flat AED 25 below.
+- Estimated delivery window shown at checkout (e.g. "1-3 business days, Dubai & Sharjah").
 
-```
-products
-  → group by brandSlug         → BrandTile list (sorted by count desc)
-    → group by productType     → stacked sections inside BrandWorld
-      → optional productSubtype subtitle inside a section
-```
+## 10. Site-wide Polish
+- **Analytics**: add Plausible (privacy-friendly, no cookie banner needed) + GA4 via env-var IDs.
+- **Search**: global product search in the header (Supabase full-text on name/brand/category).
+- **Trust band**: free delivery / money-back / authentic products / WhatsApp support.
+- **WhatsApp Click-to-Chat** floating button (UAE shoppers expect it).
+- **404 page** with brand styling and search.
+- **robots.txt** + dynamic `sitemap.xml` already exists — extend with categories, brands, blog posts.
+- **Performance**: image `loading="lazy"` audit, responsive `srcset` for product images via Supabase storage transforms.
+- **Accessibility pass**: focus rings on gold, alt text audit, contrast check on champagne text.
 
-Brand hero image = the first featured product's image (already available via `is_featured` + `sort_order` from `useProducts`).
+## Technical Notes (for the team)
 
-One small data-hygiene step: case-normalize brand display names (DB has `3me` + `3ME MAESTRI`, `FREELIMIX` + `Freelimix`, etc.) so duplicates collapse. Done client-side via `brandSlug` as the key + a tidy display label — no DB migration needed.
+| Area | Where | Tech |
+|---|---|---|
+| Payments | `enable_stripe_payments` + `/api/public/webhooks/stripe` server route | Stripe Checkout, webhook signature verify |
+| Auth | `_authenticated/` subtree + `/auth` page | Supabase managed gate, Google OAuth via `lovable.auth` |
+| Tables | New migrations | `profiles`, `customer_addresses`, `wishlists`, `carts`, `reviews`, `blog_posts`; add `payment_*` + `user_id` to `orders`. RLS + GRANTs per template rules |
+| Emails | `scaffold_auth_email_templates` + new `send-order-email` server fn | Lovable Emails, React Email |
+| Stock | DB trigger on `orders` paid → decrement `products.stock` | SQL function + trigger |
+| Search/filters | Server fn with Postgres `ilike`/full-text | TanStack Query |
+| Analytics | Script tag in `__root.tsx` head | Plausible + optional GA4 |
 
-## Animation / parallax approach
+## Suggested Build Order (so the site stays usable at each step)
 
-- Already installed: `framer-motion@12`, `embla-carousel-react`.
-- Brand tiles: `motion.div` with `useMotionValue` tilt (same technique already in `TiltCard`) + soft gold glow on hover. `whileTap={{ scale: 0.97 }}` for mobile.
-- Takeover transition: `AnimatePresence` mode="wait" crossfade between selector and world; world enters with a subtle y-up + scale.
-- Parallax: `useScroll` + `useTransform` on the brand-world backdrop image (translateY 0 → -80px on scroll). One layer only — keeps mobile smooth.
-- Product-type sections: `whileInView` fade-up (staggered children). `viewport={{ once: true, margin: "-80px" }}`.
-- Respects `prefers-reduced-motion` (motion-safe variants).
+1. **Accounts + Auth** (gates the rest)
+2. **Stripe payments + COD selector + webhook**
+3. **Order confirmation emails + customer order history**
+4. **Inventory decrement + stock badges**
+5. **Category routes + filters + global search**
+6. **Reviews**
+7. **Blog CMS**
+8. **Wishlist/cart sync, WhatsApp button, analytics, 404, sitemap extension, perf/a11y pass**
 
-## UX states
-
-- Empty brand: "No products available for this brand yet." inside the world.
-- Empty type section: hidden (don't render empty headings).
-- Search input from current `/shop` is preserved and filters within the active brand when one is selected, or across all brands in the selector view.
-
-## Responsive
-
-- Selector: 1 col mobile, 2 cols sm, 3 cols lg. Tilt disabled <768px (tap-scale only).
-- Brand world: carousel basis `78%` mobile → `1/4` xl (same scale as current TiltCard layout).
-- Sticky "← All brands" pill on mobile so users never feel trapped.
-
-## Risks / assumptions
-
-- DB brand-name casing inconsistencies — handled via `brandSlug` keying.
-- Hero image fallback if a brand has no featured product — falls back to first product image, then to a neutral CSS gradient.
-- Performance: one parallax layer + IntersectionObserver-driven reveals; tested pattern in the existing codebase.
-
-## Out of scope (won't touch)
-
-Cart logic, checkout, product detail page, auth, CMS, `/brands/$brand`, SEO meta of other pages, global styles.
+I'll ship in that order — each step is independently shippable, so you can publish after any of them.
