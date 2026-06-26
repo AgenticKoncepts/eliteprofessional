@@ -95,8 +95,6 @@ function ShopPage() {
           getBrandCover(g.brandSlug) || featured?.image || g.products[0]?.image || null;
         return { brand: g.brand, brandSlug: g.brandSlug, count: g.products.length, heroImage };
       }),
-        return { brand: g.brand, brandSlug: g.brandSlug, count: g.products.length, heroImage };
-      }),
     [brandGroups],
   );
 
