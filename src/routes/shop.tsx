@@ -8,6 +8,7 @@ import type { Product } from "@/data/products";
 import { deriveUseCase } from "@/components/ProductCard";
 import { BrandTile, type BrandTileData } from "@/components/BrandTile";
 import { BrandWorld } from "@/components/BrandWorld";
+import { getBrandCover } from "@/lib/brand-covers";
 
 export const Route = createFileRoute("/shop")({
   validateSearch: (search: Record<string, unknown>): { brand?: string } => ({
@@ -90,7 +91,8 @@ function ShopPage() {
         const featured = g.products.find(
           (p) => (p as Product & { isFeatured?: boolean }).isFeatured,
         );
-        const heroImage = featured?.image || g.products[0]?.image || null;
+        const heroImage =
+          getBrandCover(g.brandSlug) || featured?.image || g.products[0]?.image || null;
         return { brand: g.brand, brandSlug: g.brandSlug, count: g.products.length, heroImage };
       }),
     [brandGroups],
@@ -142,6 +144,7 @@ function ShopPage() {
             <BrandWorld
               brand={activeGroup.brand}
               products={activeGroup.products}
+              coverImage={getBrandCover(activeGroup.brandSlug) ?? undefined}
               onBack={clearBrand}
             />
           </motion.div>

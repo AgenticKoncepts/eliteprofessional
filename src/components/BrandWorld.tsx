@@ -15,6 +15,7 @@ interface BrandWorldProps {
   brand: string;
   products: Product[];
   onBack: () => void;
+  coverImage?: string;
 }
 
 interface TypeGroup {
@@ -46,7 +47,7 @@ function groupByType(products: Product[]): TypeGroup[] {
     .sort((a, b) => b.products.length - a.products.length);
 }
 
-export function BrandWorld({ brand, products, onBack }: BrandWorldProps) {
+export function BrandWorld({ brand, products, onBack, coverImage }: BrandWorldProps) {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "-25%"]);
@@ -55,9 +56,10 @@ export function BrandWorld({ brand, products, onBack }: BrandWorldProps) {
 
   const typeGroups = useMemo(() => groupByType(products), [products]);
   const heroImage = useMemo(() => {
+    if (coverImage) return coverImage;
     const featured = products.find((p) => (p as Product & { isFeatured?: boolean }).isFeatured);
     return featured?.image || products[0]?.image || null;
-  }, [products]);
+  }, [products, coverImage]);
 
   return (
     <motion.section
