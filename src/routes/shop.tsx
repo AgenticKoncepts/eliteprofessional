@@ -8,6 +8,7 @@ import type { Product } from "@/data/products";
 import { deriveUseCase } from "@/components/ProductCard";
 import { BrandTile, type BrandTileData } from "@/components/BrandTile";
 import { BrandWorld } from "@/components/BrandWorld";
+import { getBrandCover } from "@/lib/brand-covers";
 
 export const Route = createFileRoute("/shop")({
   validateSearch: (search: Record<string, unknown>): { brand?: string } => ({
