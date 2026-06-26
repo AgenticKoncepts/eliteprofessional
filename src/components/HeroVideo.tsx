@@ -49,12 +49,17 @@ export function HeroVideo() {
         ref={videoRef}
         className="absolute inset-0 h-full w-full object-cover"
         src="/hero-loop.mp4"
+        width={1920}
+        height={1080}
         autoPlay
         loop
         muted
         playsInline
         preload="auto"
+        // @ts-expect-error - fetchpriority is a valid HTML attribute
+        fetchpriority="high"
       />
+
       {/* cinematic overlays */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.65)_100%)]" />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/85" />
