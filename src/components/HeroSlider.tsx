@@ -12,11 +12,11 @@ import s4 from "@/assets/hero-skincare.jpg";
 import s5 from "@/assets/hero-tools.jpg";
 
 const slides = [
-  { image: s1, key: "haircare" },
-  { image: s2, key: "haircolor" },
-  { image: s3, key: "electronics" },
-  { image: s4, key: "skincare" },
-  { image: s5, key: "tools" },
+  { image: s1, key: "haircare", alt: "Professional hair care products — shampoos, conditioners and treatments" },
+  { image: s2, key: "haircolor", alt: "Permanent hair color and salon coloring systems" },
+  { image: s3, key: "electronics", alt: "Salon electronics — professional hair dryers, clippers and styling tools" },
+  { image: s4, key: "skincare", alt: "Professional skincare and body care products" },
+  { image: s5, key: "tools", alt: "Salon tools and accessories — brushes, scissors and styling instruments" },
 ];
 
 export function HeroSlider() {
@@ -48,7 +48,7 @@ export function HeroSlider() {
             >
               <img
                 src={slide.image}
-                alt={t(`hero_${slide.key}_title`)}
+                alt={slide.alt}
                 className="absolute inset-0 w-full h-full object-cover"
                 loading={i === 0 ? "eager" : "lazy"}
               />
