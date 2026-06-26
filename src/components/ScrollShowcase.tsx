@@ -2,32 +2,8 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { Link } from "@tanstack/react-router";
-
-import purple from "@/assets/hero-elite-purple.jpg";
-import gold from "@/assets/hero-elite-gold.jpg";
 
 gsap.registerPlugin(ScrollTrigger);
-
-type Panel = {
-  img: string;
-  eyebrow: string;
-  title: string;
-  italic: string;
-  body: string;
-  tint: string;
-};
-
-const panels: Panel[] = [
-  {
-    img: gold,
-    eyebrow: "ELITE PROFESSIONAL",
-    title: "",
-    italic: "\u200B",
-    body: "Marble podiums and gold smoke — a quiet luxury of tools, fragrance and accessories, hand-picked for the UAE's leading salons.",
-    tint: "oklch(0.78 0.13 85)",
-  },
-];
 
 export function ScrollShowcase() {
   const root = useRef<HTMLDivElement>(null);
