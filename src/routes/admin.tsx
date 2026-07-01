@@ -1,10 +1,27 @@
-import { createFileRoute, Outlet, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useNavigate, Link, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Layout } from "@/components/Layout";
+import { assertAdmin } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — Elite Professional" }, { name: "robots", content: "noindex,nofollow" }] }),
+  ssr: false,
+  beforeLoad: async () => {
+    try {
+      await assertAdmin();
+    } catch (err) {
+      const status = err instanceof Response ? err.status : 0;
+      if (status === 401) {
+        throw redirect({ to: "/login", search: { redirect: "/admin" } });
+      }
+      if (status === 403) {
+        // Let the component render the "not authorised" UI.
+        return;
+      }
+      throw err;
+    }
+  },
   component: AdminGate,
 });
 

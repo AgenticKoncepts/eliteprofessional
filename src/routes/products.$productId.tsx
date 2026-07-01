@@ -121,7 +121,10 @@ export const Route = createFileRoute("/products/$productId")({
     return (
       <Layout>
         <div className="container-elite py-24 text-center">
-          <p className="mb-4">Something went wrong: {error.message}</p>
+          <p className="mb-4">Something went wrong. Please try again later.</p>
+          {import.meta.env.DEV && (
+            <pre className="mb-4 text-left text-xs text-muted-foreground max-w-xl mx-auto whitespace-pre-wrap">{error.message}</pre>
+          )}
           <button
             onClick={() => {
               router.invalidate();
